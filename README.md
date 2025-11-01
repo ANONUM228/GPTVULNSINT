@@ -1,23 +1,16 @@
-GPTVULNSINT:
-Профессиональный OSINT-фреймворк разработанный 15-летним исследователем безопасности
+GPTVULNSINT: a professional OSINT framework developed by a 15-year-old security researcher
 
-1. Интеграция с 6 источниками(CRT.sh, PublicWWW, Censys, intelligenceX, Explit-DB)
+Integration with 6 sources (CRT.sh, PublicWWW, Censys, intelligenceX, Exploit-DB)
 
-2. Проверяет валидацию URL, экранирует ввод данных и защищает от SSRF атак
+Validates URLs, escapes input data, and protects against SSRF attacks
 
-3. Генерация PDF отчетов
+Generates PDF reports
 
-Пример скачивания и использования:
-pkg install git
-git clone https://github.com/myusername/GPTVULNSINT
-cd GPTVULNSNT
-pip install -r requirements.txt
-python3 gptvulnsint.py(Termux)
+Example of downloading and using: pkg install git git clone https://github.com/myusername/GPTVULNSINT cd GPTVULNSINT pip install -r requirements.txt python3 gptvulnsint.py (Termux)
 
-Для Linux используйте:
-apt, brew, или pip3 в зависимости от вашего диструбутива
+For Linux, use: apt, brew, or pip3, depending on your distribution
 
-ВНИМАНИЕ! Этот фреймворк создан исключительно для образовательных целей и этичного тестирования безопасности
+ATTENTION! This framework is created exclusively for educational purposes and ethical security testing
 
-1. Автор не несет ответственности за все ваши действия
-2. Модуль URL Scan является активным взаимодействием использовать строго с явным разрешением владельца
+The author is not responsible for all your actions
+The URL scanning module is an active tool that can only be used with the explicit permission of the owner
