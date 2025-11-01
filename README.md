@@ -1,14 +1,18 @@
 GPTVULNSINT: a professional OSINT framework developed by a 15-year-old security researcher
 
-Integration with 6 sources (CRT.sh, PublicWWW, Censys, intelligenceX, Exploit-DB)
+Integration with 6 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Exploit-DB)
 
 Validates URLs, escapes input data, and protects against SSRF attacks
 
 Generates PDF reports
 
-Example of downloading and using: pkg install git git clone https://github.com/myusername/GPTVULNSINT cd GPTVULNSINT pip install -r requirements.txt python3 gptvulnsint.py (Termux)
+Example of downloading and using: pkg install git git clone https://github.com/ANONUM228/GPTVULNSINT
+cd GPTVULNSINT
+pip install -r requirements.txt 
+python3 gptvulnsint.py (Termux)
 
-For Linux, use: apt, brew, or pip3, depending on your distribution
+For Linux, use:
+apt, brew, or pip3, depending on your distribution
 
 ATTENTION! This framework is created exclusively for educational purposes and ethical security testing
 
