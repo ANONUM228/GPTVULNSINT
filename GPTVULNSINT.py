@@ -37,37 +37,15 @@ class GPTVULNSINT:
         self.scan_results = []
         print(Fore.YELLOW + "DEBUG: Framework initialized.")
 
-    def crt(self):
-        query = input("Enter query for CRT.sh: ").strip()
-        encoded_query = quote(query)
-        url1 = f"https://crt.sh/?q=%{encoded_query}"
+    def freecampdev(self):
+        url = "https://freecamp.dev/tools/network/subdomains"
+        print(Fore.YELLOW + f"Attempting to open URL: {url}") # Добавь это
         try:
-            print(Fore.YELLOW + "Connecting to CRT.sh...")
-            response = requests.get(url1, timeout=15)
-
-            if response.status_code != 200:
-                print(Fore.RED + f"[-] HTTP Error: {response.status_code}")
-                self.scan_results.append(f"CRT Search: {query} - HTTP Error {response.status_code}")
-                return
-
-            # ПАРСИНГ СУБДОМЕНОВ БЕЗ HTML-МУСОРА
-            subdomains = set(re.findall(r'<TD[^>]*>\s*([^\s]+)\s*</TD>', response.text, re.IGNORECASE))
-
-            clean_subdomains = [d.strip() for d in subdomains if f'.{query}' in d and not d.startswith('<')]
-
-            print(Fore.GREEN + f"\n[+] Found {len(clean_subdomains)} unique subdomains for {query}:")
-            for sub in sorted(clean_subdomains):
-                print(Fore.CYAN + f" {sub}")
-
-            self.scan_results.append(f"CRT Search: {query} - Found {len(clean_subdomains)} subdomains")
-            print(Fore.GREEN + "[+] CRT search completed")
-
-        except requests.exceptions.RequestException as e:
-            print(Fore.RED + f"[-] Connection Error (CRT.sh): {e.__class__.__name__}")  # ИСПРАВЛЕНО
-            self.scan_results.append(f"CRT Search: {query} - Connection Error")
+            webbrowser.open(url) 
+            print(Fore.GREEN + "[+] Opening search results in your default browser...")
         except Exception as e:
-            print(Fore.RED + f"[-] Error: {e}")
-            self.scan_results.append(f"CRT Search: {query} - Error: {e}")
+              print(Fore.RED + f"[-] Error opening browser: {e}") # Это у тебя уже есть
+              self.scan_results.append(f"FreecampDev: Opened {url}") # Добавь результат в отчет
 
     def scan(self):
         target_url = input("Enter url: ").strip()
@@ -105,17 +83,17 @@ class GPTVULNSINT:
             print(Fore.RED + f"[-] Error: {e}")
             self.scan_results.append(f"URL Scan: {target_url} - Error: {e}")
 
-            def publicwww(self):
-                target2_domain = input("Enter dork: ").strip()
-                encoded_dork = quote(target2_domain)
-                url5 = f"https://publicwww.com/websites/{encoded_dork}"
-                self.scan_results.append(f"PublicWWW Search: {target2_domain}")
+    def publicwww(self):
+        target2_domain = input("Enter dork: ").strip()
+        encoded_dork = quote(target2_domain)
+        url5 = f"https://publicwww.com/websites/{encoded_dork}"
+        self.scan_results.append(f"PublicWWW Search: {target2_domain}")
 
-                try:
-                    webbrowser.open(url5) 
-                    print(Fore.GREEN + "[+] Opening search results in your default browser...")
-                except Exception as e:
-                    print(Fore.RED + f"[-] Error opening browser: {e}")
+        try:
+            webbrowser.open(url5) 
+            print(Fore.GREEN + "[+] Opening search results in your default browser...")
+        except Exception as e:
+                print(Fore.RED + f"[-] Error opening browser: {e}")
 
     def censys(self):
         target6 = input("Enter dork: ").strip()
@@ -181,7 +159,7 @@ tool = GPTVULNSINT()
 
 while True:
     print(Fore.RED + "=============")
-    print(Fore.GREEN + "1. CRT SH")
+    print(Fore.GREEN + "1. FREECAMPDEV")
     print(Fore.GREEN + "2. URL SCAN") 
     print(Fore.GREEN + "3. PUBLICWWW")
     print(Fore.GREEN + "4. CENSYS")
@@ -189,11 +167,12 @@ while True:
     print(Fore.GREEN + "6. EXPLOIT DB")
     print(Fore.GREEN + "7. GENERATE PDF REPORT")
     print(Fore.RED + "==============")
+    print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
     print()
     choice = input(Fore.GREEN + "Enter choice(1-7): ")
 
     if choice == "1":
-        tool.crt()
+        tool.freecampdev()
     elif choice == "2":
         tool.scan()
     elif choice == "3":
