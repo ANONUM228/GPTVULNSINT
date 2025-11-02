@@ -18,7 +18,6 @@ print(Fore.GREEN + "GPTVULNSINT")
 print(Fore.YELLOW + "===========")
 print()
 
-# --- ФУНКЦИЯ SSRF-ЗАЩИТЫ (Вне класса) ---
 def is_global_ip(url):
     try:
         hostname = url.split('//')[-1].split('/')[0].split('?')[0]
@@ -33,13 +32,13 @@ def is_global_ip(url):
         return False
 
 class GPTVULNSINT:
-    def __init__(self):  # ИСПРАВЛЕНО: init вместо init
+    def __init__(self):  
         self.scan_results = []
         print(Fore.YELLOW + "DEBUG: Framework initialized.")
 
     def freecampdev(self):
         url = "https://freecamp.dev/tools/network/subdomains"
-        print(Fore.YELLOW + f"Attempting to open URL: {url}") # Добавь это
+        print(Fore.YELLOW + f"Attempting to open URL: {url}") 
         try:
             webbrowser.open(url) 
             print(Fore.GREEN + "[+] Opening search results in your default browser...")
@@ -53,7 +52,6 @@ class GPTVULNSINT:
         if not target_url.startswith('http'):
             target_url = 'https://' + target_url
 
-        # SSRF-ПРОВЕРКА
         if not is_global_ip(target_url):
             print(Fore.RED + "[-] SECURITY WARNING: Target IP is internal or reserved. Blocking request to prevent SSRF.")
             self.scan_results.append(f"URL Scan: {target_url} - BLOCKED (SSRF Risk)")
@@ -64,7 +62,6 @@ class GPTVULNSINT:
 
             raw_links = set(re.findall(r'href=["\'](.*?)(?=["\'])', response.text))
 
-            # ФИЛЬТРАЦИЯ: только полные HTTP/HTTPS ссылки
             clean_links = [
                 link for link in raw_links 
                 if link.startswith('http://') or link.startswith('https://')
