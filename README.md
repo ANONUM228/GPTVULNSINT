@@ -1,8 +1,10 @@
 GPTVULNSINT: a professional OSINT framework developed by a 15-year-old security researcher
 
-Integration with 5 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Exploit-DB)
+Integration with 10 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Exploit-DB, google, kaspersky, metadefender, malwarebazaar, virustotal)
 
 Validates URLs, escapes input data, and protects against SSRF attacks
+
+parsing emails
 
 Generates PDF reports
 
