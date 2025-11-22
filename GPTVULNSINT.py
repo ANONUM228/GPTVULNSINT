@@ -140,7 +140,7 @@ class GPTVULNSINT:
       self.scan_results.append(f"Vulners Search: {query8}")
       webbrowser.open(url11)
       time.sleep(0.3)
-      print(Fore.GREEN + f"[+] Opening ExploitDB search results in browser: {url11}")
+      print(Fore.GREEN + f"[+] Opening Vulners search results in browser: {url11}")
 
     except Exception as e:
       print(Fore.GREEN + "--> ERROR Open!")
