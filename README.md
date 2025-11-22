@@ -21,6 +21,10 @@ python3 gptvulnsint.py (Termux)
 For Linux, use:
 apt, brew, or pip3, depending on your distribution
 
+Example usage:
+python GPTVULNSINT.py
+Enter choice(1-22): 1
+
 ATTENTION! This framework is created exclusively for educational purposes and ethical security testing
 
 The author is not responsible for all your actions
