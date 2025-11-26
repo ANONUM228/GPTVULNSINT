@@ -2,6 +2,8 @@
 
 *Integration with 19 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Vulners, Google, Crt, Suip, Whois, Kaspersky, Metadefender, MalwareBazaar, VirusTotal, Epieos, Securelist, Mitre, Misp, CelliD, Usgs)*
 
+# What can he do:
+
 *Validates URLs, escapes input data, and protects against SSRF attacks*
 
 * *Parsing email*
