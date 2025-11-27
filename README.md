@@ -27,11 +27,11 @@ python3 gptvulnsint.py (Termux)*
 *python GPTVULNSINT.py
 Enter choice(1-22): 1*
 
-Screenshor:
+# Screenshot:
 
 <img width="885" height="927" alt="Снимок экрана 2025-11-26 173659" src="https://github.com/user-attachments/assets/f90eef82-745a-40ef-a7ce-d5f9909b3bf4" />
 
-
+# WARNING:
 * *ATTENTION! This framework is created exclusively for educational purposes and ethical security testing*
 
 *The author is not responsible for all your actions
