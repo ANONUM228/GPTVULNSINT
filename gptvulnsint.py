@@ -369,7 +369,7 @@ if __name__ == "__main__":
    tool = GPTVULNSINT()
 
 while True:
-  print(Fore.RED + "Menu:")
+  print(Fore.BLUE + "Menu:")
   print()
   print(Fore.RED + "============= Website OSINT-tool =======")
   print(Fore.GREEN + "1. FreeCampDev")
