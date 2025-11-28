@@ -47,12 +47,12 @@ class GPTVULNSINT:
     url = f"https://freecamp.dev/tools/network/subdomains"
     print(Fore.YELLOW + f"Attempting to open URL: {url}")
     try:
-      webbrowser.open(url)
       time.sleep(0.3)
+      print(Fore.YELLOW + "Opening...")
+      webbrowser.open(url)
       print(Fore.GREEN + "[+] Opening search results in your default browser...")
 
     except Exception as e:
-       time.sleep(0.3)
        print(Fore.RED + f"[-] Error opening browser: {e}")
        self.scan_results.append(f"FreecampDev: Opened {url}")
 
@@ -115,6 +115,7 @@ class GPTVULNSINT:
       url7 = f"https://platform.censys.io/search?q={encoded_dork}"
       self.scan_results.append(f"Censys Search: {target6}")
       webbrowser.open(url7)
+      print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
 
     except Exception as e:
@@ -127,10 +128,29 @@ class GPTVULNSINT:
       url9 = f"https://intelx.io/?s={encoded_query}"
       self.scan_results.append(f"Intelx Search: {search}")
       webbrowser.open(url9)
+      print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
 
     except Exception as e:
-      print(Fore.GREEN + f"[+] Opening Intelx search results in browser: {url9}")
+      print(Fore.GREEN + f"IntelX {url9} open")
+
+  def headers(self):
+    try:
+      url77 = input(Fore.GREEN + "Enter url: ")
+
+      if not url77.startswith(('http://', 'https://')):
+        print(Fore.YELLOW + "--> The URL must start with 'http://' or 'https://'")
+        return
+      
+      response_object = requests.get(url77, timeout=10)
+      self.scan_results.append(f"Request to {url77} Status: {response_object.status_code}")
+      time.sleep(0.3)
+      
+      header_data = response_object.headers
+      print(header_data)
+
+    except Exception as e:
+      print(url77 + Fore.YELLOW + f"--> Request Error {e}")
 
   def vulners(self):
     try:
@@ -139,11 +159,34 @@ class GPTVULNSINT:
       url11 = f"https://vulners.com/search?query={encoded_query}"
       self.scan_results.append(f"Vulners Search: {query8}")
       webbrowser.open(url11)
+      print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
       print(Fore.GREEN + f"[+] Opening Vulners search results in browser: {url11}")
 
     except Exception as e:
       print(Fore.GREEN + "--> ERROR Open!")
+
+  def wp_scanner(self):
+    try:
+      url44 = f"https://hackertarget.com/wordpress-security-scan/"
+      self.scan_results.append(f"HackerTarget {url44} open")
+      print(Fore.CYAN + "NOTE: You must manually paste the target URL into the opened browser window.")
+      print(Fore.YELLOW + "Opening...")
+      time.sleep(0.5)
+      webbrowser.open(url44)
+
+    except Exception as e:
+      print(url44 + "--> ERROR Opening!")
+
+  def phind(self):
+    try:
+      url33 = f"https://www.phind.com/"
+      self.scan_results.append(f"Phind {url33} opened")
+      time.sleep(0.3)
+      webbrowser.open(url33)
+
+    except Exception as e:
+      print(url33 + Fore.YELLOW + "Open Error!")
 
   def generate_pdf(__self__):
     if not __self__.scan_results:
@@ -187,6 +230,7 @@ class GPTVULNSINT:
       search222 = input("Enter search: ")
       url99 = f"https://www.google.com/search?q={search222}"
       time.sleep(0.3)
+      print(Fore.YELLOW + "Opening...")
       webbrowser.open(url99)
       self.scan_results.append(f"Google search {search222}")
 
@@ -198,11 +242,11 @@ class GPTVULNSINT:
     try:
         query = input("request: ")
         url4 = f"https://crt.sh/?q=%.{query}"
+        time.sleep(0.3)
         webbrowser.open(url4)
         self.scan_results.append(f"Crt {query}")
 
     except Exception as e:
-        time.sleep(0.3)
         print(url4 + Fore.GREEN + "--> ERROR")
 
   def suip(self):
@@ -210,6 +254,7 @@ class GPTVULNSINT:
        query = input(Fore.GREEN + "Enter: ")
        url = f"https://suip.biz/ru/?act=hostmap&host={query}"
        time.sleep(0.3)
+       print(Fore.YELLOW + "Opening...")
        webbrowser.open(url)
        self.scan_results.append(f"request {query}, {url} opened")
 
@@ -218,9 +263,10 @@ class GPTVULNSINT:
 
   def whois(self):
       try:
-          q = input(Fore.GREEN + "Enter: ")
+          q = input(Fore.GREEN + "Enter url: ")
           url1 = f"https://www.reg.ru/whois/?dname={q}"
           time.sleep(0.3)
+          print(Fore.YELLOW + "Opening...")
           webbrowser.open(url1)
           self.scan_results.append(f"request {url1}, {q} opened")
 
@@ -232,6 +278,7 @@ class GPTVULNSINT:
           query15 = input(Fore.GREEN + "Enter request: ")
           url22 = f"https://opentip.kaspersky.com/{query15}/?tab=lookup"
           time.sleep(0.3)
+          print(Fore.YELLOW + "Opening...")
           webbrowser.open(url22)
           self.scan_results.append(f"Kaspersky {query15}")
 
@@ -242,19 +289,21 @@ class GPTVULNSINT:
     try:
       query110 = input(Fore.GREEN + "Enter query: ")
       url20 = f"https://metadefender.com/results/url/{query110}"
+      print(Fore.YELLOW + "Opening...")
+      time.sleep(0.3)
       webbrowser.open(url20)
       self.scan_results.append(f"Metadefender {query110}")
 
     except Exception as e:
-      time.sleep(0.3)
       print(url20 + Fore.GREEN + "--> Opening error")
 
   def malwarebazaar(self):
     try:
       url00 = f"https://bazaar.abuse.ch/browse/"
-      webbrowser.open(url00)
       self.scan_results.append(f"MalwareBaaZaar {url00} Opened")
+      print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
+      webbrowser.open(url00)
 
     except Exception as e:
       print(url00 + Fore.GREEN + "--> ERROR")
@@ -263,8 +312,9 @@ class GPTVULNSINT:
   def virustotal(self):
     try:
       url11 = f"https://www.virustotal.com/gui/home/search/"
-      webbrowser.open(url11)
+      print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
+      webbrowser.open(url11)
       self.scan_results.append(f"VirusTotal {url11}")
 
     except Exception as e:
@@ -273,6 +323,7 @@ class GPTVULNSINT:
   def epieos(self):
     try:
         url106 = f"https://epieos.com/"
+        print(Fore.YELLOW + "Opening...")
         time.sleep(0.3)
         webbrowser.open(url106)
         self.scan_results.append(f"Epieos {url106} Opened")
@@ -317,9 +368,10 @@ class GPTVULNSINT:
   def securelist(self):
     try:
        url = f"https://securelist.com/"
-       webbrowser.open(url)
        self.scan_results.append(f"SecureList {url} Opened")
+       print(Fore.YELLOW + "Opening...")
        time.sleep(0.3)
+       webbrowser.open(url)
 
     except Exception as e:
         print(url + Fore.GREEN + "--> Open Error") 
@@ -327,8 +379,9 @@ class GPTVULNSINT:
   def mitre(self):
       try:
           url1 = f"https://attack.mitre.org/"
-          webbrowser.open(url1)
           time.sleep(0.3)
+          print(Fore.YELLOW + "Opening...")
+          webbrowser.open(url1)
           self.scan_results.append(f"Mitre {url1} Opened")
 
       except Exception as e:
@@ -337,8 +390,9 @@ class GPTVULNSINT:
   def misp(self):
       try:
           url2 = f"https://www.misp-project.org/"
-          webbrowser.open(url2)
+          print(Fore.YELLOW + "Opening...")
           time.sleep(0.3)
+          webbrowser.open(url2)
           self.scan_results.append(f"Misp {url2} Opened")
 
       except Exception as e:
@@ -347,6 +401,7 @@ class GPTVULNSINT:
   def cell_id(self):
       try:
          url220 = f"https://infocelltowers.ru/ymaps"
+         print(Fore.YELLOW + "Opening...")
          time.sleep(0.3)
          webbrowser.open(url220)
          self.scan_results.append(f"CellTowers {url220} Opened")
@@ -358,6 +413,7 @@ class GPTVULNSINT:
       try:
          url222 = f"https://earthexplorer.usgs.gov/"
          print(Fore.YELLOW + "ATTENTION! The page may take a long time to load or may not work!")
+         print(Fore.YELLOW + "Opening...")
          time.sleep(2)
          webbrowser.open(url222)
          self.scan_results.append(f"USGS {url222} Opened")
@@ -377,37 +433,42 @@ while True:
   print(Fore.GREEN + "3. Publicwww")
   print(Fore.GREEN + "4. Censys")
   print(Fore.GREEN + "5. IntelX")
-  print(Fore.GREEN + "6. Vulners")
-  print(Fore.GREEN + "7. Generate pdf report")
-  print(Fore.GREEN + "8. Google search")
-  print(Fore.GREEN + "9. Crt")
-  print(Fore.GREEN + "10. Suip")
-  print(Fore.GREEN + "11. Whois")
+  print(Fore.GREEN + "6. Generate pdf report")
+  print(Fore.GREEN + "7. Google search")
+  print(Fore.GREEN + "8. Crt")
+  print(Fore.GREEN + "9. Suip")
+  print(Fore.GREEN + "10. Whois")
+  print()
+  print(Fore.RED + "=========== Search Vulnerabilities-tool ============")
+  print(Fore.GREEN + "11. Headers")
+  print(Fore.GREEN + "12. Vulners")
+  print(Fore.GREEN + "13. WP Scanner")
+  print(Fore.GREEN + "14. Phind")
   print()
   print(Fore.RED + "=========== Malware Analytics OSINT-tool ===========")
-  print(Fore.GREEN + "12. Kaspersky")
-  print(Fore.GREEN + "13. Metadefender")
-  print(Fore.GREEN + "14. MalwareBazaar")
-  print(Fore.GREEN + "15. VirusTotal")
+  print(Fore.GREEN + "14. Kaspersky")
+  print(Fore.GREEN + "15. Metadefender")
+  print(Fore.GREEN + "16. MalwareBazaar")
+  print(Fore.GREEN + "17. VirusTotal")
   print()
   print(Fore.RED + "=========== Email OSINT-tool ============")
-  print(Fore.GREEN + "16. Epieos")
-  print(Fore.GREEN + "17. Email parse")
+  print(Fore.GREEN + "18. Epieos")
+  print(Fore.GREEN + "19. Email parse")
   print()
   print(Fore.RED + "=========== Threat Intelligence OSINT-tool")
-  print(Fore.GREEN + "18. Securelist")
-  print(Fore.GREEN + "19. Mitre")
-  print(Fore.GREEN + "20. Misp")
+  print(Fore.GREEN + "20. Securelist")
+  print(Fore.GREEN + "21. Mitre")
+  print(Fore.GREEN + "22. Misp")
   print()
   print(Fore.RED + "========== Mobile Network OSINT-tool")
-  print(Fore.GREEN + "21. CellID")
-  print(Fore.GREEN + "22. Usgs")
+  print(Fore.GREEN + "23. CellID")
+  print(Fore.GREEN + "24. Usgs")
   print()
   print(Fore.YELLOW + "=========== Disclaimer =============")
   print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
   print()
 
-  choice = input(Fore.GREEN + "Enter choice(1-22): ") 
+  choice = input(Fore.GREEN + "Enter choice(1-24): ") 
 
   if choice == "1":
     tool.freecampdev()
@@ -420,28 +481,34 @@ while True:
   elif choice == "5":
     tool.intelx()
   elif choice == "6":
-    tool.vulners()
-  elif choice == "7":
     tool.generate_pdf()
-  elif choice == "8":
+  elif choice == "7":
     tool.google_search()
-  elif choice == "9":
+  elif choice == "8":
     tool.crt()
-  elif choice == "10":
+  elif choice == "9":
     tool.suip()
-  elif choice == "11":
+  elif choice == "10":
     tool.whois()
+  elif choice == "11":
+    tool.headers()
   elif choice == "12":
-    tool.kaspersky()
+    tool.vulners()
   elif choice == "13":
-    tool.metadefender()
+    tool.wp_scanner()
   elif choice == "14":
-    tool.malwarebazaar()
+    tool.phind()
   elif choice == "15":
-    tool.virustotal()
+    tool.kaspersky()
   elif choice == "16":
-    tool.epieos()
+    tool.metadefender()
   elif choice == "17":
+    tool.malwarebazaar()
+  elif choice == "18":
+    tool.virustotal()
+  elif choice == "19":
+    tool.epieos()
+  elif choice == "20":
     website_url = input(Fore.GREEN + "Enter url for email parsing: ").strip()
     if not website_url.startswith('http'):
       website_url = 'https://' + website_url
@@ -460,15 +527,15 @@ while True:
     else:
       print(Fore.GREEN + "Email-addresses not found")
       print(Fore.GREEN + "="*30) 
-  elif choice == "18":
-    tool.securelist()
-  elif choice == "19":
-    tool.mitre()
-  elif choice == "20":
-    tool.misp()
   elif choice == "21":
-    tool.cell_id()
+    tool.securelist()
   elif choice == "22":
+    tool.mitre()
+  elif choice == "21":
+    tool.misp()
+  elif choice == "23":
+    tool.cell_id()
+  elif choice == "24":
     tool.usgs()
   else:
     print(Fore.RED + "[-] Invalid choice")
