@@ -27,7 +27,7 @@ python3 gptvulnsint.py (Termux)*
 
 ### Example usage:
 *python GPTVULNSINT.py
-Enter choice(1-22): 1*
+Enter choice(1-25): 1*
 
 # Screenshot:
 
@@ -37,4 +37,4 @@ Enter choice(1-22): 1*
 * *ATTENTION! This framework is created exclusively for educational purposes and ethical security testing*
 
 *The author is not responsible for all your actions
-The URL scanning, parse email module is an active tool that can only be used with the explicit permission of the owner*
+The URL scanning, parse email, parsing headers module is an active tool that can only be used with the explicit permission of the owner*
