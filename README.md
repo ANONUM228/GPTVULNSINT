@@ -1,6 +1,6 @@
 # GPTVULNSINT: a professional OSINT framework developed by a 15-year-old security researcher 
 
-*Integration with 19 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Vulners, Google, Crt, Suip, Whois, Kaspersky, Metadefender, MalwareBazaar, VirusTotal, Epieos, Securelist, Mitre, Misp, CelliD, Usgs)*
+*Integration with 21 sources (freecamp.dev, PublicWWW, Censys, intelligenceX, Vulners, HackerTarget, Phind, Google, Crt, Suip, Whois, Kaspersky, Metadefender, MalwareBazaar, VirusTotal, Epieos, Securelist, Mitre, Misp, CelliD, Usgs)*
 
 # What can he do:
 
@@ -11,6 +11,8 @@
 * *Generates PDF reports*
 
 * *Parsing links*
+  
+* *Parsing headers*
 
 ### Example of downloading and using:
 
