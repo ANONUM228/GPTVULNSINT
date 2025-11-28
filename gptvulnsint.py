@@ -17,7 +17,7 @@ import time
 init()
 print(Fore.YELLOW + "============= ")
 print(Fore.GREEN + "GPTVULNSINT")
-print(Fore.GREEN + "version 3.0.0")
+print(Fore.GREEN + "version 4.0.0")
 print(Fore.YELLOW + "============= ")
 print()
 print(Fore.RED + "======= information =======")
