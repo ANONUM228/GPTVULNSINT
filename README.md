@@ -16,6 +16,8 @@
   
 * *Parsing headers*
 
+* *Logging*
+
 ### Example of downloading and using:
 
 *pkg install git
