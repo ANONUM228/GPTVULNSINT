@@ -13,16 +13,19 @@ from ipaddress import ip_address
 import requests.exceptions
 from bs4 import BeautifulSoup
 import time
+import logging
 
 init()
 print(Fore.YELLOW + "============= ")
 print(Fore.GREEN + "GPTVULNSINT")
-print(Fore.GREEN + "version 4.0.0")
+print(Fore.GREEN + "version 3.0.0")
 print(Fore.YELLOW + "============= ")
 print()
 print(Fore.RED + "======= information =======")
 print( Fore.GREEN + "Author: ANONUM228")
 print()
+
+logging.basicConfig(filename='gptvulnsint.log', level=logging.DEBUG)
 
 def is_global_ip(url):
   try:
@@ -49,10 +52,12 @@ class GPTVULNSINT:
     try:
       time.sleep(0.3)
       print(Fore.YELLOW + "Opening...")
+      logging.info(f'Opened {url}')
       webbrowser.open(url)
       print(Fore.GREEN + "[+] Opening search results in your default browser...")
 
     except Exception as e:
+       logging.error(f'Opened {url} error')
        print(Fore.RED + f"[-] Error opening browser: {e}")
        self.scan_results.append(f"FreecampDev: Opened {url}")
 
@@ -95,18 +100,19 @@ class GPTVULNSINT:
       time.sleep(0.3)
 
   def publicwww(self):
-    target2_domain = input(Fore.GREEN + "Enter dork: ").strip()
-    encoded_dork = quote(target2_domain)
-    url5 = f"https://publicwww.com/websites/{encoded_dork}"
-    self.scan_results.append(f"PublicWWW Search: {target2_domain}")
-
     try:
-      webbrowser.open(url5)
-      time.sleep(0.3)
-      print(Fore.GREEN + "[+] Opening search results in your default browser...")
+       target2_domain = input(Fore.GREEN + "Enter dork: ").strip()
+       encoded_dork = quote(target2_domain)
+       url5 = f"https://publicwww.com/websites/{encoded_dork}"
+       self.scan_results.append(f"PublicWWW Search: {target2_domain}")
+       webbrowser.open(url5)
+       time.sleep(0.3)
+       logging.info(f'Opened {url5}')
+       print(Fore.GREEN + "[+] Opening search results in your default browser...")
 
     except Exception as e:
-        print(Fore.RED + f"[-] Error opening browser: {e}")
+      logging.error(f'Opened {url5}')
+      print(Fore.RED + f"[-] Error opening browser: {e}")
 
   def censys(self):
     try:
@@ -115,10 +121,12 @@ class GPTVULNSINT:
       url7 = f"https://platform.censys.io/search?q={encoded_dork}"
       self.scan_results.append(f"Censys Search: {target6}")
       webbrowser.open(url7)
+      logging.info(f'Opened {url7}')
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
 
     except Exception as e:
+      logging.error(f'Opened {url7}')
       print(Fore.GREEN + f"[+] Opening Censys search results in browser: {url7}")
 
   def intelx(self):
@@ -128,10 +136,12 @@ class GPTVULNSINT:
       url9 = f"https://intelx.io/?s={encoded_query}"
       self.scan_results.append(f"Intelx Search: {search}")
       webbrowser.open(url9)
+      logging.info(f'Opened {url9}')
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
 
     except Exception as e:
+      logging.error(f'Opened {url9} error')
       print(Fore.GREEN + f"IntelX {url9} open")
 
   def headers(self):
@@ -144,12 +154,14 @@ class GPTVULNSINT:
       
       response_object = requests.get(url77, timeout=10)
       self.scan_results.append(f"Request to {url77} Status: {response_object.status_code}")
+      logging.info(f'REquest to {url77} Status: {response_object.status_code}')
       time.sleep(0.3)
       
       header_data = response_object.headers
       print(header_data)
 
     except Exception as e:
+      logging.error(f'Requested {url77} error')
       print(url77 + Fore.YELLOW + f"--> Request Error {e}")
 
   def vulners(self):
@@ -158,34 +170,40 @@ class GPTVULNSINT:
       encoded_query = quote(query8)
       url11 = f"https://vulners.com/search?query={encoded_query}"
       self.scan_results.append(f"Vulners Search: {query8}")
+      logging.info(f'Opened {url11}')
       webbrowser.open(url11)
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
       print(Fore.GREEN + f"[+] Opening Vulners search results in browser: {url11}")
 
     except Exception as e:
+      logging.error(f'Opened {url11} error')
       print(Fore.GREEN + "--> ERROR Open!")
 
   def wp_scanner(self):
     try:
       url44 = f"https://hackertarget.com/wordpress-security-scan/"
       self.scan_results.append(f"HackerTarget {url44} open")
+      logging.info(f'Opened {url44}')
       print(Fore.CYAN + "NOTE: You must manually paste the target URL into the opened browser window.")
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.5)
       webbrowser.open(url44)
 
     except Exception as e:
+      logging.error(f'Opened {url44} error')
       print(url44 + "--> ERROR Opening!")
 
   def phind(self):
     try:
       url33 = f"https://www.phind.com/"
       self.scan_results.append(f"Phind {url33} opened")
+      logging.error(f'Opened {url33}')
       time.sleep(0.3)
       webbrowser.open(url33)
 
     except Exception as e:
+      logging.error(f'Opened {url33} error')
       print(url33 + Fore.YELLOW + "Open Error!")
 
   def generate_pdf(__self__):
@@ -233,9 +251,10 @@ class GPTVULNSINT:
       print(Fore.YELLOW + "Opening...")
       webbrowser.open(url99)
       self.scan_results.append(f"Google search {search222}")
+      logging.info(f'Opened {url99}')
 
     except Exception as e:
-       time.sleep(0.3)
+       logging.error(f'Opened {url99} error')
        print(url99 + Fore.GREEN + "--> Opening error")
 
   def crt(self):
@@ -244,9 +263,11 @@ class GPTVULNSINT:
         url4 = f"https://crt.sh/?q=%.{query}"
         time.sleep(0.3)
         webbrowser.open(url4)
+        logging.info(f'Opened {url4}')
         self.scan_results.append(f"Crt {query}")
 
     except Exception as e:
+        logging.error(f'Opened {url4} error')
         print(url4 + Fore.GREEN + "--> ERROR")
 
   def suip(self):
@@ -256,9 +277,11 @@ class GPTVULNSINT:
        time.sleep(0.3)
        print(Fore.YELLOW + "Opening...")
        webbrowser.open(url)
+       logging.info(f'Opened {url}')
        self.scan_results.append(f"request {query}, {url} opened")
 
     except Exception as e:
+        logging.error(f'Opened {url} error')
         print(url, Fore.GREEN + "--> ERROR")
 
   def whois(self):
@@ -268,9 +291,11 @@ class GPTVULNSINT:
           time.sleep(0.3)
           print(Fore.YELLOW + "Opening...")
           webbrowser.open(url1)
+          logging.info(f'Opened {url1}')
           self.scan_results.append(f"request {url1}, {q} opened")
 
       except Exception as e:
+          logging.error(f'Opened {url1}')
           print(url1, Fore.GREEN + "--> ERROR")
 
   def kaspersky(self):
@@ -280,9 +305,11 @@ class GPTVULNSINT:
           time.sleep(0.3)
           print(Fore.YELLOW + "Opening...")
           webbrowser.open(url22)
+          logging.info(f'Opened {url22}')
           self.scan_results.append(f"Kaspersky {query15}")
 
       except Exception as e:
+          logging.error(f'Opened {url22} error')
           print(url22 + Fore.GREEN + "--> Opening error")
 
   def metadefender(self):
@@ -292,9 +319,11 @@ class GPTVULNSINT:
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
       webbrowser.open(url20)
+      logging.info(f'Opened {url20}')
       self.scan_results.append(f"Metadefender {query110}")
 
     except Exception as e:
+      logging.error(f'Opened {url20} error')
       print(url20 + Fore.GREEN + "--> Opening error")
 
   def malwarebazaar(self):
@@ -304,8 +333,11 @@ class GPTVULNSINT:
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
       webbrowser.open(url00)
+      self.scan_results.append(f"MalwareBazaar {url00}")
+      logging.info(f'Opened {url00}')
 
     except Exception as e:
+      logging.error(f'Opened {url00} error')
       print(url00 + Fore.GREEN + "--> ERROR")
       pass
 
@@ -315,9 +347,11 @@ class GPTVULNSINT:
       print(Fore.YELLOW + "Opening...")
       time.sleep(0.3)
       webbrowser.open(url11)
+      logging.info(f'Opened {url11}')
       self.scan_results.append(f"VirusTotal {url11}")
 
     except Exception as e:
+      logging.error(f'Opened {url11} error')
       print(url11 + Fore.GREEN + "--> ERROR")
 
   def epieos(self):
@@ -326,9 +360,11 @@ class GPTVULNSINT:
         print(Fore.YELLOW + "Opening...")
         time.sleep(0.3)
         webbrowser.open(url106)
+        logging.info(f'Opened {url106}')
         self.scan_results.append(f"Epieos {url106} Opened")
 
     except Exception as e:
+        logging.error(f'Opened {url106} error')
         print(url106 + Fore.GREEN + "--> ERROR")
 
   def email_parse(self, url): 
@@ -367,36 +403,42 @@ class GPTVULNSINT:
   
   def securelist(self):
     try:
-       url = f"https://securelist.com/"
-       self.scan_results.append(f"SecureList {url} Opened")
+       url2 = f"https://securelist.com/"
+       logging.info(f'Opened {url2}')
+       self.scan_results.append(f"SecureList {url2} Opened")
        print(Fore.YELLOW + "Opening...")
        time.sleep(0.3)
-       webbrowser.open(url)
+       webbrowser.open(url2)
 
     except Exception as e:
-        print(url + Fore.GREEN + "--> Open Error") 
+        logging.info(f'Opened {url2} error')
+        print(url2 + Fore.GREEN + "--> Open Error") 
 
   def mitre(self):
       try:
-          url1 = f"https://attack.mitre.org/"
-          time.sleep(0.3)
+          url16 = f"https://attack.mitre.org/"
           print(Fore.YELLOW + "Opening...")
-          webbrowser.open(url1)
-          self.scan_results.append(f"Mitre {url1} Opened")
+          time.sleep(0.3)
+          webbrowser.open(url16)
+          logging.info(f'Opened {url16}')
+          self.scan_results.append(f"Mitre {url16} Opened")
 
       except Exception as e:
-          print(url1 + Fore.GREEN + "--> Open Error") 
+          logging.error(f'Opened {url16} error')
+          print(url16 + Fore.GREEN + "--> Open Error") 
 
   def misp(self):
       try:
-          url2 = f"https://www.misp-project.org/"
+          url3 = f"https://www.misp-project.org/"
           print(Fore.YELLOW + "Opening...")
           time.sleep(0.3)
-          webbrowser.open(url2)
-          self.scan_results.append(f"Misp {url2} Opened")
+          webbrowser.open(url3)
+          logging.info(f'Opened {url3}')
+          self.scan_results.append(f"Misp {url3} Opened")
 
       except Exception as e:
-          print(url2 + Fore.GREEN + "--> Open Error")
+          logging.error(f'Opened {url3} error')
+          print(url3 + Fore.GREEN + "--> Open Error")
 
   def cell_id(self):
       try:
@@ -404,9 +446,11 @@ class GPTVULNSINT:
          print(Fore.YELLOW + "Opening...")
          time.sleep(0.3)
          webbrowser.open(url220)
+         logging.info(f'Opened {url220}')
          self.scan_results.append(f"CellTowers {url220} Opened")
 
-      except Exception as e: 
+      except Exception as e:
+         logging.error(f'Opened {url220} error')
          print(url220 + Fore.GREEN + "--> ERROR Opening")
 
   def usgs(self):
@@ -416,9 +460,11 @@ class GPTVULNSINT:
          print(Fore.YELLOW + "Opening...")
          time.sleep(2)
          webbrowser.open(url222)
+         logging.info(f'Opened {url222}')
          self.scan_results.append(f"USGS {url222} Opened")
 
       except Exception as e:
+         logging.debug(f'Opened {url222} error')
          print(url222 + Fore.GREEN + "--> ERROR Opening")
 
 if __name__ == "__main__":
@@ -446,23 +492,23 @@ while True:
   print(Fore.GREEN + "14. Phind")
   print()
   print(Fore.RED + "=========== Malware Analytics OSINT-tool ===========")
-  print(Fore.GREEN + "15. Kaspersky")
-  print(Fore.GREEN + "16. Metadefender")
-  print(Fore.GREEN + "17. MalwareBazaar")
-  print(Fore.GREEN + "18. VirusTotal")
+  print(Fore.GREEN + "14. Kaspersky")
+  print(Fore.GREEN + "15. Metadefender")
+  print(Fore.GREEN + "16. MalwareBazaar")
+  print(Fore.GREEN + "17. VirusTotal")
   print()
   print(Fore.RED + "=========== Email OSINT-tool ============")
-  print(Fore.GREEN + "19. Epieos")
-  print(Fore.GREEN + "20. Email parse")
+  print(Fore.GREEN + "18. Epieos")
+  print(Fore.GREEN + "19. Email parse")
   print()
   print(Fore.RED + "=========== Threat Intelligence OSINT-tool")
-  print(Fore.GREEN + "21. Securelist")
-  print(Fore.GREEN + "22. Mitre")
-  print(Fore.GREEN + "23. Misp")
+  print(Fore.GREEN + "20. Securelist")
+  print(Fore.GREEN + "21. Mitre")
+  print(Fore.GREEN + "22. Misp")
   print()
   print(Fore.RED + "========== Mobile Network OSINT-tool")
-  print(Fore.GREEN + "24. CellID")
-  print(Fore.GREEN + "25. Usgs")
+  print(Fore.GREEN + "23. CellID")
+  print(Fore.GREEN + "24. Usgs")
   print()
   print(Fore.YELLOW + "=========== Disclaimer =============")
   print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
@@ -531,11 +577,11 @@ while True:
     tool.securelist()
   elif choice == "22":
     tool.mitre()
-  elif choice == "23":
+  elif choice == "21":
     tool.misp()
-  elif choice == "24":
+  elif choice == "23":
     tool.cell_id()
-  elif choice == "25":
+  elif choice == "24":
     tool.usgs()
   else:
     print(Fore.RED + "[-] Invalid choice")
