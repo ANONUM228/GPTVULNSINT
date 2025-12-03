@@ -111,7 +111,7 @@ class GPTVULNSINT:
        print(Fore.GREEN + "[+] Opening search results in your default browser...")
 
     except Exception as e:
-      logging.error(f'Opened {url5}')
+      logging.error(f'Opened {url5} error')
       print(Fore.RED + f"[-] Error opening browser: {e}")
 
   def censys(self):
@@ -126,7 +126,7 @@ class GPTVULNSINT:
       time.sleep(0.3)
 
     except Exception as e:
-      logging.error(f'Opened {url7}')
+      logging.error(f'Opened {url7} error')
       print(Fore.GREEN + f"[+] Opening Censys search results in browser: {url7}")
 
   def intelx(self):
@@ -295,7 +295,7 @@ class GPTVULNSINT:
           self.scan_results.append(f"request {url1}, {q} opened")
 
       except Exception as e:
-          logging.error(f'Opened {url1}')
+          logging.error(f'Opened {url1} error')
           print(url1, Fore.GREEN + "--> ERROR")
 
   def kaspersky(self):
@@ -411,7 +411,7 @@ class GPTVULNSINT:
        webbrowser.open(url2)
 
     except Exception as e:
-        logging.info(f'Opened {url2} error')
+        logging.error(f'Opened {url2} error')
         print(url2 + Fore.GREEN + "--> Open Error") 
 
   def mitre(self):
@@ -492,23 +492,23 @@ while True:
   print(Fore.GREEN + "14. Phind")
   print()
   print(Fore.RED + "=========== Malware Analytics OSINT-tool ===========")
-  print(Fore.GREEN + "14. Kaspersky")
-  print(Fore.GREEN + "15. Metadefender")
-  print(Fore.GREEN + "16. MalwareBazaar")
-  print(Fore.GREEN + "17. VirusTotal")
+  print(Fore.GREEN + "15. Kaspersky")
+  print(Fore.GREEN + "16. Metadefender")
+  print(Fore.GREEN + "17. MalwareBazaar")
+  print(Fore.GREEN + "18. VirusTotal")
   print()
   print(Fore.RED + "=========== Email OSINT-tool ============")
-  print(Fore.GREEN + "18. Epieos")
-  print(Fore.GREEN + "19. Email parse")
+  print(Fore.GREEN + "19. Epieos")
+  print(Fore.GREEN + "20. Email parse")
   print()
   print(Fore.RED + "=========== Threat Intelligence OSINT-tool")
-  print(Fore.GREEN + "20. Securelist")
-  print(Fore.GREEN + "21. Mitre")
-  print(Fore.GREEN + "22. Misp")
+  print(Fore.GREEN + "21. Securelist")
+  print(Fore.GREEN + "22. Mitre")
+  print(Fore.GREEN + "23. Misp")
   print()
   print(Fore.RED + "========== Mobile Network OSINT-tool")
-  print(Fore.GREEN + "23. CellID")
-  print(Fore.GREEN + "24. Usgs")
+  print(Fore.GREEN + "24. CellID")
+  print(Fore.GREEN + "25. Usgs")
   print()
   print(Fore.YELLOW + "=========== Disclaimer =============")
   print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
@@ -575,9 +575,9 @@ while True:
       print(Fore.GREEN + "="*30) 
   elif choice == "21":
     tool.securelist()
-  elif choice == "22":
-    tool.mitre()
   elif choice == "21":
+    tool.mitre()
+  elif choice == "22":
     tool.misp()
   elif choice == "23":
     tool.cell_id()
