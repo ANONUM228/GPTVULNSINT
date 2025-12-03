@@ -575,13 +575,13 @@ while True:
       print(Fore.GREEN + "="*30) 
   elif choice == "21":
     tool.securelist()
-  elif choice == "21":
-    tool.mitre()
   elif choice == "22":
-    tool.misp()
+    tool.mitre()
   elif choice == "23":
-    tool.cell_id()
+    tool.misp()
   elif choice == "24":
+    tool.cell_id()
+  elif choice == "25":
     tool.usgs()
   else:
     print(Fore.RED + "[-] Invalid choice")
