@@ -514,7 +514,7 @@ while True:
   print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
   print()
 
-  choice = input(Fore.GREEN + "Enter choice(1-24): ") 
+  choice = input(Fore.GREEN + "Enter choice(1-25): ") 
 
   if choice == "1":
     tool.freecampdev()
