@@ -24,9 +24,9 @@ pip install -r requirements.txt
 python3 gptvulnsint.py
 Then: Use the interactive menu. No config needed for basic scans.
 
-📸 See It in Action
+Contributing
 
-images/screenshot.png
+Issues and Pull Requests are welcome.
 
 What's Inside? (Key Modules)
 
