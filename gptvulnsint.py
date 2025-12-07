@@ -1,587 +1,741 @@
 import re
+import asyncio
+import aiohttp
 import requests
-from colorama import init, Fore
 import webbrowser
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-import io
-import os
-from datetime import datetime
-from urllib.parse import quote
-import socket 
-from ipaddress import ip_address
-import requests.exceptions
-from bs4 import BeautifulSoup
+import socket
 import time
 import logging
+import os
+from datetime import datetime
+from urllib.parse import quote, urljoin
+from ipaddress import ip_address
+from collections import defaultdict
+from colorama import init, Fore, Back, Style
+from bs4 import BeautifulSoup
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
-init()
-print(Fore.YELLOW + "============= ")
-print(Fore.GREEN + "GPTVULNSINT")
-print(Fore.GREEN + "version 3.0.0")
-print(Fore.YELLOW + "============= ")
-print()
-print(Fore.RED + "======= information =======")
-print( Fore.GREEN + "Author: ANONUM228")
-print()
+init(autoreset=True)
+logging.basicConfig(
+    filename='gptvulnsint.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
-logging.basicConfig(filename='gptvulnsint.log', level=logging.DEBUG)
-
-def is_global_ip(url):
-  try:
-    hostname = url.split('//')[-1].split('/')[0].split('?')[0]
-    if not hostname:
-      return False
-
-    ip_addr = socket.gethostbyname(hostname)
-    ip = ip_address(ip_addr)
-
-    return not (ip.is_private or ip.is_reserved or ip.is_loopback)
-  except Exception:
-    return False
-
-class GPTVULNSINT:
-  def __init__(self): 
-    self.scan_results = []
-    print(Fore.YELLOW + "DEBUG: Framework initialized.")
+def print_banner():
+    print(Fore.YELLOW + "="*11)
+    print(Fore.GREEN + r"GPTVULNSINT")
+    print(Fore.YELLOW + "="*11)
+    print()
+    print(Fore.CYAN + "GPTVULNSINT v5.5 - Professional OSINT Framework")
+    print(Fore.RED + "Author: ANONUM228 | For educational purposes only!")
     print()
 
-  def freecampdev(self):
-    url = f"https://freecamp.dev/tools/network/subdomains"
-    print(Fore.YELLOW + f"Attempting to open URL: {url}")
+def safe_open_url(url, description="url"):
     try:
-      time.sleep(0.3)
-      print(Fore.YELLOW + "Opening...")
-      logging.info(f'Opened {url}')
-      webbrowser.open(url)
-      print(Fore.GREEN + "[+] Opening search results in your default browser...")
-
-    except Exception as e:
-       logging.error(f'Opened {url} error')
-       print(Fore.RED + f"[-] Error opening browser: {e}")
-       self.scan_results.append(f"FreecampDev: Opened {url}")
-
-  def scan(self):
-    target_url = input(Fore.GREEN + "Enter url: ").strip()
-
-    if not target_url.startswith('http'):
-      target_url = 'https://' + target_url
-
-    if not is_global_ip(target_url):
-      print(Fore.RED + "[-] SECURITY WARNING: Target IP is internal or reserved. Blocking request to prevent SSRF.")
-      self.scan_results.append(f"URL Scan: {target_url} - BLOCKED (SSRF Risk)")
-      return
-
-    try:
-      response = requests.get(target_url, timeout=1)
-      response.raise_for_status() 
-
-      raw_links = set(re.findall(r'href=["\'](.*?)(?=["\'])', response.text))
-
-      clean_links = [
-        link for link in raw_links 
-        if link.startswith('http://') or link.startswith('https://')
-      ]
-      time.sleep(0.3)
-      print(Fore.GREEN + f"\n[+] Found {len(clean_links)} clean links:")
-      for link in sorted(clean_links):
-
-        print(Fore.CYAN + f" {link}")
-
-      self.scan_results.append(f"URL Scan: {target_url} - Found {len(clean_links)} clean links")
-
-    except requests.exceptions.RequestException as e:
-      print(Fore.RED + f"[-] Connection Error (Scan): {e}") 
-      self.scan_results.append(f"URL Scan: {target_url} - Connection Error")
-
-    except Exception as e:
-      print(Fore.RED + f"[-] Error: {e}")
-      self.scan_results.append(f"URL Scan: {target_url} - Error: {e}")
-      time.sleep(0.3)
-
-  def publicwww(self):
-    try:
-       target2_domain = input(Fore.GREEN + "Enter dork: ").strip()
-       encoded_dork = quote(target2_domain)
-       url5 = f"https://publicwww.com/websites/{encoded_dork}"
-       self.scan_results.append(f"PublicWWW Search: {target2_domain}")
-       webbrowser.open(url5)
-       time.sleep(0.3)
-       logging.info(f'Opened {url5}')
-       print(Fore.GREEN + "[+] Opening search results in your default browser...")
-
-    except Exception as e:
-      logging.error(f'Opened {url5} error')
-      print(Fore.RED + f"[-] Error opening browser: {e}")
-
-  def censys(self):
-    try:
-      target6 = input(Fore.GREEN + "Enter dork: ").strip()
-      encoded_dork = quote(target6)
-      url7 = f"https://platform.censys.io/search?q={encoded_dork}"
-      self.scan_results.append(f"Censys Search: {target6}")
-      webbrowser.open(url7)
-      logging.info(f'Opened {url7}')
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-
-    except Exception as e:
-      logging.error(f'Opened {url7} error')
-      print(Fore.GREEN + f"[+] Opening Censys search results in browser: {url7}")
-
-  def intelx(self):
-    try:
-      search = input(Fore.YELLOW + "Enter query: ").strip()
-      encoded_query = quote(search)
-      url9 = f"https://intelx.io/?s={encoded_query}"
-      self.scan_results.append(f"Intelx Search: {search}")
-      webbrowser.open(url9)
-      logging.info(f'Opened {url9}')
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-
-    except Exception as e:
-      logging.error(f'Opened {url9} error')
-      print(Fore.GREEN + f"IntelX {url9} open")
-
-  def headers(self):
-    try:
-      url77 = input(Fore.GREEN + "Enter url: ")
-
-      if not url77.startswith(('http://', 'https://')):
-        print(Fore.YELLOW + "--> The URL must start with 'http://' or 'https://'")
-        return
-      
-      response_object = requests.get(url77, timeout=10)
-      self.scan_results.append(f"Request to {url77} Status: {response_object.status_code}")
-      logging.info(f'REquest to {url77} Status: {response_object.status_code}')
-      time.sleep(0.3)
-      
-      header_data = response_object.headers
-      print(header_data)
-
-    except Exception as e:
-      logging.error(f'Requested {url77} error')
-      print(url77 + Fore.YELLOW + f"--> Request Error {e}")
-
-  def vulners(self):
-    try:
-      query8 = input(Fore.GREEN + "Enter query: ").strip()
-      encoded_query = quote(query8)
-      url11 = f"https://vulners.com/search?query={encoded_query}"
-      self.scan_results.append(f"Vulners Search: {query8}")
-      logging.info(f'Opened {url11}')
-      webbrowser.open(url11)
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-      print(Fore.GREEN + f"[+] Opening Vulners search results in browser: {url11}")
-
-    except Exception as e:
-      logging.error(f'Opened {url11} error')
-      print(Fore.GREEN + "--> ERROR Open!")
-
-  def wp_scanner(self):
-    try:
-      url44 = f"https://hackertarget.com/wordpress-security-scan/"
-      self.scan_results.append(f"HackerTarget {url44} open")
-      logging.info(f'Opened {url44}')
-      print(Fore.CYAN + "NOTE: You must manually paste the target URL into the opened browser window.")
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.5)
-      webbrowser.open(url44)
-
-    except Exception as e:
-      logging.error(f'Opened {url44} error')
-      print(url44 + "--> ERROR Opening!")
-
-  def phind(self):
-    try:
-      url33 = f"https://www.phind.com/"
-      self.scan_results.append(f"Phind {url33} opened")
-      logging.error(f'Opened {url33}')
-      time.sleep(0.3)
-      webbrowser.open(url33)
-
-    except Exception as e:
-      logging.error(f'Opened {url33} error')
-      print(url33 + Fore.YELLOW + "Open Error!")
-
-  def generate_pdf(__self__):
-    if not __self__.scan_results:
-      print(Fore.RED + "[-] No scan results to generate PDF")
-      return
-
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(100, 800, "GPTVULNSINT Security Report")
-
-    p.setFont("Helvetica", 10)
-    p.drawString(100, 780, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-
-    y_position = 750
-    for i, result in enumerate(__self__.scan_results):
-      p.drawString(100, y_position, f"{i+1}. {result}")
-      y_position -= 20
-
-    p.showPage()
-    p.save()
-    buffer.seek(0)
-
-    name_pdf = input("Enter PDF file name (will be saved on Desktop): ").strip()
-    if not name_pdf.lower().endswith('.pdf'):
-      name_pdf += '.pdf'
-
-    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", name_pdf)
-
-    with open(desktop_path, 'wb') as f:
-      f.write(buffer.getvalue())
-
-    print(f"✅ PDF saved: {desktop_path}")
-    __self__.scan_results = []
-    time.sleep(0.3)
-    return desktop_path
-
-  def google_search(self):
-    try:
-      search222 = input("Enter search: ")
-      url99 = f"https://www.google.com/search?q={search222}"
-      time.sleep(0.3)
-      print(Fore.YELLOW + "Opening...")
-      webbrowser.open(url99)
-      self.scan_results.append(f"Google search {search222}")
-      logging.info(f'Opened {url99}')
-
-    except Exception as e:
-       logging.error(f'Opened {url99} error')
-       print(url99 + Fore.GREEN + "--> Opening error")
-
-  def crt(self):
-    try:
-        query = input("request: ")
-        url4 = f"https://crt.sh/?q=%.{query}"
+        print(Fore.YELLOW + f"Opening {description}...")
+        webbrowser.open(url)
+        logging.info(f"Opened {description}: {url}")
         time.sleep(0.3)
-        webbrowser.open(url4)
-        logging.info(f'Opened {url4}')
-        self.scan_results.append(f"Crt {query}")
-
+        return True
     except Exception as e:
-        logging.error(f'Opened {url4} error')
-        print(url4 + Fore.GREEN + "--> ERROR")
+        logging.error(f"Error opening {description}: {e}")
+        print(Fore.RED + f"Error opening {description}: {e}")
+        return False
 
-  def suip(self):
+def is_global_ip(url):
     try:
-       query = input(Fore.GREEN + "Enter: ")
-       url = f"https://suip.biz/ru/?act=hostmap&host={query}"
-       time.sleep(0.3)
-       print(Fore.YELLOW + "Opening...")
-       webbrowser.open(url)
-       logging.info(f'Opened {url}')
-       self.scan_results.append(f"request {query}, {url} opened")
-
-    except Exception as e:
-        logging.error(f'Opened {url} error')
-        print(url, Fore.GREEN + "--> ERROR")
-
-  def whois(self):
-      try:
-          q = input(Fore.GREEN + "Enter url: ")
-          url1 = f"https://www.reg.ru/whois/?dname={q}"
-          time.sleep(0.3)
-          print(Fore.YELLOW + "Opening...")
-          webbrowser.open(url1)
-          logging.info(f'Opened {url1}')
-          self.scan_results.append(f"request {url1}, {q} opened")
-
-      except Exception as e:
-          logging.error(f'Opened {url1} error')
-          print(url1, Fore.GREEN + "--> ERROR")
-
-  def kaspersky(self):
-      try:
-          query15 = input(Fore.GREEN + "Enter request: ")
-          url22 = f"https://opentip.kaspersky.com/{query15}/?tab=lookup"
-          time.sleep(0.3)
-          print(Fore.YELLOW + "Opening...")
-          webbrowser.open(url22)
-          logging.info(f'Opened {url22}')
-          self.scan_results.append(f"Kaspersky {query15}")
-
-      except Exception as e:
-          logging.error(f'Opened {url22} error')
-          print(url22 + Fore.GREEN + "--> Opening error")
-
-  def metadefender(self):
+        parsed_url = url.replace('https://', '').replace('http://', '')
+        hostname = parsed_url.split('/')[0].split(':')[0]
+        
+        if hostname.lower() in ['localhost', '127.0.0.1', '0.0.0.0', '::1']:
+            return False
+            
+        internal_domains = ['.local', '.internal', '.corp', '.lan', '.home']
+        if any(hostname.lower().endswith(domain) for domain in internal_domains):
+            return False
+            
+        ip = socket.gethostbyname(hostname)
+        ip_obj = ip_address(ip)
+        
+        if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_reserved:
+            print(Fore.RED + f"[-] BLOCKED: Private/reserved IP {ip}")
+            return False
+            
+        return True
+        
+    except (socket.gaierror, ValueError):
+        return True  
+    except Exception:
+        return True
+    
+async def fetch_url_async(session, url, timeout=10):
     try:
-      query110 = input(Fore.GREEN + "Enter query: ")
-      url20 = f"https://metadefender.com/results/url/{query110}"
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-      webbrowser.open(url20)
-      logging.info(f'Opened {url20}')
-      self.scan_results.append(f"Metadefender {query110}")
-
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout)) as response:
+            if response.status == 200:
+                return await response.text()
+            return None
     except Exception as e:
-      logging.error(f'Opened {url20} error')
-      print(url20 + Fore.GREEN + "--> Opening error")
+        print(Fore.RED + f"Failed to fetch {url[:50]}...: {e}")
+        return None
 
-  def malwarebazaar(self):
-    try:
-      url00 = f"https://bazaar.abuse.ch/browse/"
-      self.scan_results.append(f"MalwareBaaZaar {url00} Opened")
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-      webbrowser.open(url00)
-      self.scan_results.append(f"MalwareBazaar {url00}")
-      logging.info(f'Opened {url00}')
+async def scan_js_files_async(base_url, js_urls, max_files=5):
+    all_js_content = []
+    
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for js_url in js_urls[:max_files]:
+            if js_url.startswith('//'):
+                js_url = 'https:' + js_url
+            elif js_url.startswith('/'):
+                js_url = urljoin(base_url, js_url)
+            elif not js_url.startswith('http'):
+                continue
+                
+            tasks.append(fetch_url_async(session, js_url, 5))
+        
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for i, content in enumerate(results):
+            if content and isinstance(content, str):
+                all_js_content.append(content)
+                
+    return all_js_content
 
-    except Exception as e:
-      logging.error(f'Opened {url00} error')
-      print(url00 + Fore.GREEN + "--> ERROR")
-      pass
+class GPTVULNSINT:
+    def __init__(self):
+        self.scan_results = []
+        print(Fore.GREEN + "[+] Framework initialized successfully!")
+        self.session = None
+        
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession()
+        return self
+        
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.session:
+            await self.session.close()
+        
+    def freecampdev(self):
+        url = "https://freecamp.dev/tools/network/subdomains"
+        self.scan_results.append("FreeCampDev: Subdomain search opened")
+        safe_open_url(url, "FreeCampDev")
+        
+    def scan(self):
+        target_url = input(Fore.CYAN + "Enter url: ").strip()
+        
+        if not target_url.startswith('http'):
+            target_url = 'https://' + target_url
+            
+        if not is_global_ip(target_url):
+            print(Fore.RED + "SECURITY BLOCK: Target is internal/local")
+            self.scan_results.append(f"URL Scan: {target_url} - BLOCKED")
+            return
+            
+        try:
+            response = requests.get(target_url, timeout=10)
+            links = re.findall(r'href=["\'](https?://[^"\']+)', response.text)
+            clean_links = [link for link in links if re.match(r'^https?://', link)]
+            
+            print(Fore.GREEN + f"\n[+] Found {len(clean_links)} external links:")
+            for i, link in enumerate(sorted(set(clean_links))[:15], 1):
+                print(Fore.CYAN + f"  {i:2}. {link}")
+                
+            if len(clean_links) > 15:
+                print(Fore.YELLOW + f"  ... and {len(clean_links) - 15} more")
+                
+            self.scan_results.append(f"URL Scan: {target_url} - Found {len(clean_links)} links")
+            
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def publicwww(self):
+        try:
+            dork = input(Fore.CYAN + "Enter search dork: ").strip()
+            encoded = quote(dork)
+            url = f"https://publicwww.com/websites/{encoded}"
+            self.scan_results.append(f"PublicWWW Search: {dork}")
+            safe_open_url(url, "PublicWWW")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def censys(self):
+        try:
+            query = input(Fore.CYAN + "Enter Censys query: ").strip()
+            encoded = quote(query)
+            url = f"https://search.censys.io/search?q={encoded}"
+            self.scan_results.append(f"Censys Search: {query}")
+            safe_open_url(url, "Censys")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def intelx(self):
+        try:
+            query = input(Fore.CYAN + "Enter IntelX query: ").strip()
+            encoded = quote(query)
+            url = f"https://intelx.io/?s={encoded}"
+            self.scan_results.append(f"IntelX Search: {query}")
+            safe_open_url(url, "IntelX")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def crt(self):
+        try:
+            domain = input(Fore.CYAN + "Enter domain: ").strip()
+            url = f"https://crt.sh/?q=%.{domain}"
+            self.scan_results.append(f"crt.sh Search: {domain}")
+            safe_open_url(url, "crt.sh")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def suip(self):
+        try:
+            target = input(Fore.CYAN + "Enter domain/IP: ").strip()
+            url = f"https://suip.biz/ru/?act=hostmap&host={target}"
+            self.scan_results.append(f"suip Search: {target}")
+            safe_open_url(url, "suip.biz")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def whois(self):
+        try:
+            domain = input(Fore.CYAN + "Enter domain: ").strip()
+            url = f"https://www.reg.ru/whois/?dname={domain}"
+            self.scan_results.append(f"Whois Lookup: {domain}")
+            safe_open_url(url, "Whois")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def headers(self):
+        try:
+            url = input(Fore.CYAN + "Enter url: ").strip()
+            if not url.startswith(('http://', 'https://')):
+                url = 'https://' + url
+                
+            response = requests.get(url, timeout=10)
+            print(Fore.GREEN + f"\n[+] Headers for {url} (Status: {response.status_code}):")
+            
+            security_headers = ['X-Frame-Options', 'X-Content-Type-Options',
+                              'Strict-Transport-Security', 'Content-Security-Policy',
+                              'X-XSS-Protection', 'Referrer-Policy']
+            
+            for header, value in response.headers.items():
+                if header in security_headers:
+                    print(Fore.CYAN + f"{header}: {value}")
+                else:
+                    print(Fore.WHITE + f"{header}: {value}")
+                    
+            missing = [h for h in security_headers if h not in response.headers]
+            if missing:
+                print(Fore.RED + f"\nMissing security headers: {', '.join(missing)}")
+                
+            self.scan_results.append(f"Header Analysis: {url} - Status {response.status_code}")
+            
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def vulners(self):
+        try:
+            query = input(Fore.CYAN + "Enter vuln query: ").strip()
+            encoded = quote(query)
+            url = f"https://vulners.com/search?query={encoded}"
+            self.scan_results.append(f"Vulners Search: {query}")
+            safe_open_url(url, "Vulners")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def wp_scanner(self):
+        url = "https://hackertarget.com/wordpress-security-scan/"
+        print(Fore.YELLOW + "Note: Paste target URL manually in the browser")
+        self.scan_results.append("WordPress Scanner opened")
+        safe_open_url(url, "WordPress Scanner")
+        
+    def phind(self):
+        url = "https://www.phind.com/"
+        self.scan_results.append("Phind AI Search opened")
+        safe_open_url(url, "Phind")
+        
+    async def sensitive_data_scan_async(self):
+        
+        target_url = input(Fore.CYAN + "Enter URL to scan: ").strip()
+        if not target_url.startswith(('http://', 'https://')):
+            target_url = 'https://' + target_url
+            
+        print(Fore.YELLOW + f"\n[⚡] Starting FAST sensitive data scan for: {target_url}")
+        
+        patterns = {
+            "AWS_ACCESS_KEY": r'AKIA[0-9A-Z]{16}',
+            "AWS_SECRET_KEY": r'aws[^"\']*["\']([0-9a-zA-Z/+]{40})["\']',
+            "STRIPE_SECRET_KEY": r'sk_live_[0-9a-zA-Z]{24}',
+            "DATABASE_URL": r'(postgres|mysql|mongodb)://[^:]+:[^@]+@',
+            "GITHUB_TOKEN": r'gh(p|o|u|s|r)_[0-9a-zA-Z]{36}',
+            "TWILIO_API_KEY": r'SK[0-9a-fA-F]{32}',
+            "JWT_TOKEN": r'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}',
+            "API_KEY_GENERIC": r'["\'][0-9a-zA-Z\-_]{20,50}["\']',
+            "PASSWORD": r'password["\']?\s*[=:]\s*["\']([^"\']{8,50})["\']',
+            "EMAIL": r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+        }
+        
+        try:
+            print(Fore.YELLOW + "[+] Fetching main page...")
+            async with aiohttp.ClientSession() as session:
+                async with session.get(target_url, timeout=15) as response:
+                    if response.status != 200:
+                        print(Fore.RED + f"[-] HTTP Error: {response.status}")
+                        return
+                    
+                    html_content = await response.text()
+            
+            print(Fore.YELLOW + "[+] Parsing for JavaScript files...")
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            text_content = soup.get_text()
+            lines = [line.strip() for line in text_content.splitlines() if line.strip()]
+            text_to_scan = "\n".join(lines[:500])  
+            
+            js_urls = []
+            for script in soup.find_all('script', src=True):
+                src = script['src']
+                if src:
+                    if src.startswith('//'):
+                        src = 'https:' + src
+                    elif src.startswith('/'):
+                        src = urljoin(target_url, src)
+                    elif not src.startswith('http'):
+                        continue
+                    js_urls.append(src)
+            
+            print(Fore.YELLOW + f"Found {len(js_urls)} JavaScript files")
+            
+            js_contents = []
+            if js_urls:
+                js_contents = await scan_js_files_async(target_url, js_urls, max_files=3)
+                print(Fore.YELLOW + f"Loaded {len(js_contents)} JS files")
+            
+            all_content = text_to_scan
+            for js_content in js_contents:
+                all_content += "\n" + js_content[:1000]
+            
+            print(Fore.YELLOW + f"Total content to scan: {len(all_content):,} characters")
+            
+            print(Fore.YELLOW + "Scanning for secrets (timeout: 10 seconds)...")
+            
+            results = defaultdict(list)
+            start_time = time.time()
+            
+            for name, pattern in patterns.items():
+                if time.time() - start_time > 10:  
+                    print(Fore.YELLOW + "Scan timeout reached, stopping...")
+                    break
+                
+                try:
+                    matches = re.finditer(pattern, all_content, re.IGNORECASE)
+                    count = 0
+                    for match in matches:
+                        if count >= 10:  
+                            break
+                        
+                        value = match.group(0)
+                        if match.lastindex:
+                            value = match.group(match.lastindex)
+                        
+                        if self._is_test_data(value):
+                            continue
+                        
+                        display_val = value[:30] + "..." if len(value) > 30 else value
+                        results[name].append(display_val)
+                        count += 1
+                        
+                except Exception as e:
+                    continue
+            
+            print(Fore.GREEN + "\n" + "="*60)
+            print(Fore.YELLOW + "🔐 Scan results:")
+            print(Fore.GREEN + "="*60)
+            
+            total_found = sum(len(v) for v in results.values())
+            
+            if total_found == 0:
+                print(Fore.GREEN + "No secrets found (scan completed in 10s)")
+            else:
+                critical = ["AWS_ACCESS_KEY", "AWS_SECRET_KEY", "STRIPE_SECRET_KEY", "DATABASE_URL"]
+                high = ["GITHUB_TOKEN", "TWILIO_API_KEY"]
+                medium = ["JWT_TOKEN", "API_KEY_GENERIC", "PASSWORD"]
+                
+                for risk_level, pattern_names in [("🔴 CRITICAL", critical), 
+                                                 ("🟠 HIGH", high), 
+                                                 ("🟡 MEDIUM", medium)]:
+                    found_items = []
+                    for name in pattern_names:
+                        if name in results:
+                            found_items.extend(results[name])
+                    
+                    if found_items:
+                        color = {"🔴 CRITICAL": Fore.RED, "🟠 HIGH": Fore.YELLOW, "🟡 MEDIUM": Fore.MAGENTA}[risk_level]
+                        print(color + f"\n{risk_level} ({len(found_items)} found):")
+                        for i, item in enumerate(found_items[:3], 1):
+                            print(color + f"  {i}. {item}")
+                        if len(found_items) > 3:
+                            print(color + f"  ... and {len(found_items)-3} more")
+                
+                print(Fore.RED + f"\nTotal secrets found: {total_found}")
+                print(Fore.YELLOW + f"Scan completed in {time.time() - start_time:.1f} seconds")
+            
+            print(Fore.GREEN + "="*60)
+            
+            self.scan_results.append(f"Fast Secrets Scan: {target_url} - Found {total_found} secrets")
+            
+            if results:
+                self._quick_save_results(target_url, results)
+                
+        except asyncio.TimeoutError:
+            print(Fore.RED + "[-] Scan timeout: Operation took too long")
+        except Exception as e:
+            print(Fore.RED + f"[-] Scan error: {str(e)[:100]}")
+    
+    def sensitive_data_scan(self):
+        asyncio.run(self.sensitive_data_scan_async())
+    
+    def _is_test_data(self, value):
+        test_words = ['test', 'example', 'demo', 'fake', 'placeholder', 'xxx', 'aaa']
+        return any(word in value.lower() for word in test_words)
+    
+    def _quick_save_results(self, url, results):
+        try:
+            filename = f"scan_{datetime.now().strftime('%H%M%S')}.txt"
+            with open(filename, 'w') as f:
+                f.write(f"Scan: {url}\n")
+                f.write(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n")
+                
+                for name, items in results.items():
+                    if items:
+                        f.write(f"\n{name} ({len(items)}):\n")
+                        for item in items:
+                            f.write(f"  - {item}\n")
+            
+            print(Fore.GREEN + f"Quick report saved: {filename}")
+        except:
+            pass
+    
+    def kaspersky(self):
+        try:
+            query = input(Fore.CYAN + "Enter hash/IP/domain: ").strip()
+            url = f"https://opentip.kaspersky.com/{query}/"
+            self.scan_results.append(f"Kaspersky Check: {query}")
+            safe_open_url(url, "Kaspersky")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def metadefender(self):
+        try:
+            query = input(Fore.CYAN + "Enter hash/url: ").strip()
+            url = f"https://metadefender.opswat.com/results?input={query}"
+            self.scan_results.append(f"MetaDefender Check: {query}")
+            safe_open_url(url, "MetaDefender")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def malwarebazaar(self):
+        url = "https://bazaar.abuse.ch/browse/"
+        self.scan_results.append("MalwareBazaar opened")
+        safe_open_url(url, "MalwareBazaar")
+        
+    def virustotal(self):
+        url = "https://www.virustotal.com/gui/home/search"
+        self.scan_results.append("VirusTotal opened")
+        safe_open_url(url, "VirusTotal")
+        
+    def epieos(self):
+    
+        url = "https://epieos.com/"
+        self.scan_results.append("EpieOS opened")
+        safe_open_url(url, "Epieos")
+        
+    def email_parse(self):
+        url = input(Fore.CYAN + "Enter website url: ").strip()
+        if not url.startswith('http'):
+            url = 'https://' + url
+            
+        print(Fore.YELLOW + f"\nExtracting emails from: {url}")
+        
+        try:
+            response = requests.get(url, timeout=10)
+            emails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', response.text)
+            
+            soup = BeautifulSoup(response.text, 'html.parser')
+            for link in soup.find_all('a', href=True):
+                if link['href'].startswith('mailto:'):
+                    email = link['href'][7:].split('?')[0]
+                    if re.match(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', email):
+                        emails.append(email)
+            
+            unique_emails = sorted(set([e.lower() for e in emails]))
+            
+            if unique_emails:
+                print(Fore.GREEN + f"\nFound {len(unique_emails)} email(s):")
+                for email in unique_emails:
+                    print(Fore.CYAN + f"  • {email}")
+            else:
+                print(Fore.YELLOW + "No emails found")
+                
+            self.scan_results.append(f"Email Parse: {url} - Found {len(unique_emails)} emails")
+            
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def securelist(self):
+        url = "https://securelist.com/"
+        self.scan_results.append("SecureList opened")
+        safe_open_url(url, "SecureList")
+        
+    def mitre(self):
+        url = "https://attack.mitre.org/"
+        self.scan_results.append("MITRE ATT&CK opened")
+        safe_open_url(url, "MITRE ATT&CK")
+        
+    def misp(self):
+        """MISP Threat Sharing"""
+        url = "https://www.misp-project.org/"
+        self.scan_results.append("MISP opened")
+        safe_open_url(url, "MISP")
+        
+    def cell_id(self):
+        url = "https://infocelltowers.ru/ymaps"
+        print(Fore.YELLOW + "[!] Russian cell tower database")
+        self.scan_results.append("Cell Tower DB opened")
+        safe_open_url(url, "Cell Tower DB")
+        
+    def usgs(self):
+        url = "https://earthexplorer.usgs.gov/"
+        print(Fore.YELLOW + "USGS may be slow to load")
+        self.scan_results.append("USGS opened")
+        safe_open_url(url, "USGS")
+        
+    def google_search(self):
+        try:
+            query = input(Fore.CYAN + "Enter search query: ").strip()
+            encoded = quote(query)
+            url = f"https://www.google.com/search?q={encoded}"
+            self.scan_results.append(f"Google Search: {query}")
+            safe_open_url(url, "Google")
+        except Exception as e:
+            print(Fore.RED + f"Error: {e}")
+            
+    def generate_pdf(self):
+        if not self.scan_results:
+            print(Fore.RED + "No scan results to report")
+            return
+            
+        filename = input(Fore.CYAN + "Enter report name (without .pdf): ").strip()
+        if not filename:
+            filename = f"gptvulnsint_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            
+        filename += '.pdf'
+        
+        try:
+            c = canvas.Canvas(filename, pagesize=A4)
+            width, height = A4
+            
+            c.setFont("Helvetica-Bold", 20)
+            c.drawString(50, height - 50, "GPTVULNSINT Security Report")
+            
+            c.setFont("Helvetica", 10)
+            c.drawString(50, height - 80, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            c.drawString(50, height - 100, f"Total scans: {len(self.scan_results)}")
+            
+            y = height - 130
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(50, y, "Scan Results:")
+            
+            c.setFont("Helvetica", 10)
+            y -= 20
+            
+            for i, result in enumerate(self.scan_results, 1):
+                if y < 50:
+                    c.showPage()
+                    y = height - 50
+                    c.setFont("Helvetica", 10)
+                    
+                c.drawString(60, y, f"{i}. {result[:100]}")
+                y -= 15
+            
+            c.save()
+            
+            print(Fore.GREEN + f"\nPDF saved: {filename}")
+            print(Fore.YELLOW + f"Total entries: {len(self.scan_results)}")
+            
+            self.scan_results = []
+            
+        except Exception as e:
+            print(Fore.RED + f"PDF generation error: {e}")
+            
+    def show_stats(self):
+        if not self.scan_results:
+            print(Fore.YELLOW + "No scans performed yet")
+            return
+            
+        print(Fore.CYAN + "\n" + "="*50)
+        print(Fore.YELLOW + "Current Statistic")
+        print(Fore.CYAN + "="*50)
+        print(Fore.GREEN + f"Total scans performed: {len(self.scan_results)}")
+        
+        categories = defaultdict(int)
+        for result in self.scan_results:
+            if "Scan" in result:
+                categories["Scans"] += 1
+            elif "Search" in result:
+                categories["Searches"] += 1
+            else:
+                categories["Other"] += 1
+                
+        for category, count in categories.items():
+            print(Fore.CYAN + f"  {category}: {count}")
+            
+        print(Fore.CYAN + "="*50)
+        
+    def clear_results(self):
+        confirm = input(Fore.YELLOW + "Clear all results? (y/n): ").lower()
+        if confirm == 'y':
+            self.scan_results = []
+            print(Fore.GREEN + "Results cleared")
+            
+def print_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print_banner()
+    
+    menu_sections = [
+        ("WEBSITE OSINT", [
+            ("1", "FreeCampDev (Subdomains)"),
+            ("2", "URL Scan (Extract Links)"),
+            ("3", "PublicWWW Search"),
+            ("4", "Censys Search"),
+            ("5", "IntelX Search"),
+            ("8", "crt.sh Certificates"),
+            ("9", "SUIP.biz Tools"),
+            ("10", "WHOIS Lookup")
+        ]),
+        
+        ("VULNERABILITY SCANNING", [
+            ("11", "HTTP Headers Analysis"),
+            ("12", "Vulners Database"),
+            ("13", "WordPress Scanner"),
+            ("14", "Phind AI Search"),
+            ("15", "Sensitive Data Scan (FAST)")
+        ]),
+        
+        ("MALWARE ANALYSIS", [
+            ("16", "Kaspersky TI"),
+            ("17", "MetaDefender"),
+            ("18", "MalwareBazaar"),
+            ("19", "VirusTotal")
+        ]),
+        
+        ("EMAIL OSINT", [
+            ("20", "EpieOS Tools"),
+            ("21", "Email Parser")
+        ]),
+        
+        ("THREAT INTELLIGENCE", [
+            ("22", "SecureList (Kaspersky)"),
+            ("23", "MITRE ATT&CK"),
+            ("24", "MISP Platform")
+        ]),
+        
+        ("MOBILE & GEO", [
+            ("25", "Cell Tower Info"),
+            ("26", "USGS Earth Explorer")
+        ]),
+        
+        ("UTILITIES", [
+            ("7", "Google Search"),
+            ("6", "Generate PDF Report"),
+            ("27", "Show Statistics"),
+            ("28", "Clear Results"),
+            ("0", "Exit")
+        ])
+    ]
+    
+    for section_title, options in menu_sections:
+        print(Fore.RED + f"\n{section_title}")
+        print(Fore.RED + "-" * len(section_title))
+        for num, desc in options:
+            print(Fore.GREEN + f"  {num:>2}. {desc}")
+            
+    print(Fore.YELLOW + "\n" + "="*50)
 
-  def virustotal(self):
-    try:
-      url11 = f"https://www.virustotal.com/gui/home/search/"
-      print(Fore.YELLOW + "Opening...")
-      time.sleep(0.3)
-      webbrowser.open(url11)
-      logging.info(f'Opened {url11}')
-      self.scan_results.append(f"VirusTotal {url11}")
-
-    except Exception as e:
-      logging.error(f'Opened {url11} error')
-      print(url11 + Fore.GREEN + "--> ERROR")
-
-  def epieos(self):
-    try:
-        url106 = f"https://epieos.com/"
-        print(Fore.YELLOW + "Opening...")
-        time.sleep(0.3)
-        webbrowser.open(url106)
-        logging.info(f'Opened {url106}')
-        self.scan_results.append(f"Epieos {url106} Opened")
-
-    except Exception as e:
-        logging.error(f'Opened {url106} error')
-        print(url106 + Fore.GREEN + "--> ERROR")
-
-  def email_parse(self, url): 
-   emails = set()
-   try:
-     headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.2000.0 Safari/537.36'
-     }
-     response = requests.get(url, headers=headers, timeout=3)
-     response.raise_for_status() 
-     html_content = response.text
-     soup = BeautifulSoup(html_content, 'html.parser') 
-
-     text_content = soup.get_text()
-     email_regex = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
-
-     found_emails_in_text = re.findall(email_regex, text_content)
-     for email in found_emails_in_text:
-      emails.add(email.lower())
-
-     for link in soup.find_all('a', href=True):
-      href = link['href']
-      if href.startswith('mailto:'):
-        email_in_mailto = href[7:].split('?')[0] 
-        if re.match(email_regex, email_in_mailto):
-          emails.add(email_in_mailto.lower())
-     return list(emails)
-
-   except requests.exceptions.RequestException as e:
-     print(Fore.YELLOW + f"[-] Error when requesting to {url}: {e}")
-     return [] 
-   
-   except Exception as e:
-    print(Fore.YELLOW + f"[-] An unexpected error has occurred: {e}")
-    return []
-  
-  def securelist(self):
-    try:
-       url2 = f"https://securelist.com/"
-       logging.info(f'Opened {url2}')
-       self.scan_results.append(f"SecureList {url2} Opened")
-       print(Fore.YELLOW + "Opening...")
-       time.sleep(0.3)
-       webbrowser.open(url2)
-
-    except Exception as e:
-        logging.error(f'Opened {url2} error')
-        print(url2 + Fore.GREEN + "--> Open Error") 
-
-  def mitre(self):
-      try:
-          url16 = f"https://attack.mitre.org/"
-          print(Fore.YELLOW + "Opening...")
-          time.sleep(0.3)
-          webbrowser.open(url16)
-          logging.info(f'Opened {url16}')
-          self.scan_results.append(f"Mitre {url16} Opened")
-
-      except Exception as e:
-          logging.error(f'Opened {url16} error')
-          print(url16 + Fore.GREEN + "--> Open Error") 
-
-  def misp(self):
-      try:
-          url3 = f"https://www.misp-project.org/"
-          print(Fore.YELLOW + "Opening...")
-          time.sleep(0.3)
-          webbrowser.open(url3)
-          logging.info(f'Opened {url3}')
-          self.scan_results.append(f"Misp {url3} Opened")
-
-      except Exception as e:
-          logging.error(f'Opened {url3} error')
-          print(url3 + Fore.GREEN + "--> Open Error")
-
-  def cell_id(self):
-      try:
-         url220 = f"https://infocelltowers.ru/ymaps"
-         print(Fore.YELLOW + "Opening...")
-         time.sleep(0.3)
-         webbrowser.open(url220)
-         logging.info(f'Opened {url220}')
-         self.scan_results.append(f"CellTowers {url220} Opened")
-
-      except Exception as e:
-         logging.error(f'Opened {url220} error')
-         print(url220 + Fore.GREEN + "--> ERROR Opening")
-
-  def usgs(self):
-      try:
-         url222 = f"https://earthexplorer.usgs.gov/"
-         print(Fore.YELLOW + "ATTENTION! The page may take a long time to load or may not work!")
-         print(Fore.YELLOW + "Opening...")
-         time.sleep(2)
-         webbrowser.open(url222)
-         logging.info(f'Opened {url222}')
-         self.scan_results.append(f"USGS {url222} Opened")
-
-      except Exception as e:
-         logging.debug(f'Opened {url222} error')
-         print(url222 + Fore.GREEN + "--> ERROR Opening")
+def main():
+    tool = GPTVULNSINT()
+    
+    while True:
+        print_menu()
+        choice = input(Fore.CYAN + "\nSelect option (0-28): ").strip()
+        
+        if choice == "0":
+            print(Fore.YELLOW + "\nExiting GPTVULNSINT. Stay secure!")
+            break
+            
+        elif choice == "1":
+            tool.freecampdev()
+        elif choice == "2":
+            tool.scan()
+        elif choice == "3":
+            tool.publicwww()
+        elif choice == "4":
+            tool.censys()
+        elif choice == "5":
+            tool.intelx()
+        elif choice == "6":
+            tool.generate_pdf()
+        elif choice == "7":
+            tool.google_search()
+        elif choice == "8":
+            tool.crt()
+        elif choice == "9":
+            tool.suip()
+        elif choice == "10":
+            tool.whois()
+        elif choice == "11":
+            tool.headers()
+        elif choice == "12":
+            tool.vulners()
+        elif choice == "13":
+            tool.wp_scanner()
+        elif choice == "14":
+            tool.phind()
+        elif choice == "15":
+            tool.sensitive_data_scan()
+        elif choice == "16":
+            tool.kaspersky()
+        elif choice == "17":
+            tool.metadefender()
+        elif choice == "18":
+            tool.malwarebazaar()
+        elif choice == "19":
+            tool.virustotal()
+        elif choice == "20":
+            tool.epieos()
+        elif choice == "21":
+            tool.email_parse()
+        elif choice == "22":
+            tool.securelist()
+        elif choice == "23":
+            tool.mitre()
+        elif choice == "24":
+            tool.misp()
+        elif choice == "25":
+            tool.cell_id()
+        elif choice == "26":
+            tool.usgs()
+        elif choice == "27":
+            tool.show_stats()
+        elif choice == "28":
+            tool.clear_results()
+        else:
+            print(Fore.RED + "Invalid option")
+            
+        input(Fore.YELLOW + "\nPress Enter to continue...")
 
 if __name__ == "__main__":
-   tool = GPTVULNSINT()
-
-while True:
-  print(Fore.BLUE + "Menu:")
-  print()
-  print(Fore.RED + "============= Website OSINT-tool =======")
-  print(Fore.GREEN + "1. FreeCampDev")
-  print(Fore.GREEN + "2. Url Scan") 
-  print(Fore.GREEN + "3. Publicwww")
-  print(Fore.GREEN + "4. Censys")
-  print(Fore.GREEN + "5. IntelX")
-  print(Fore.GREEN + "6. Generate pdf report")
-  print(Fore.GREEN + "7. Google search")
-  print(Fore.GREEN + "8. Crt")
-  print(Fore.GREEN + "9. Suip")
-  print(Fore.GREEN + "10. Whois")
-  print()
-  print(Fore.RED + "=========== Search Vulnerabilities-tool ============")
-  print(Fore.GREEN + "11. Headers")
-  print(Fore.GREEN + "12. Vulners")
-  print(Fore.GREEN + "13. WP Scanner")
-  print(Fore.GREEN + "14. Phind")
-  print()
-  print(Fore.RED + "=========== Malware Analytics OSINT-tool ===========")
-  print(Fore.GREEN + "15. Kaspersky")
-  print(Fore.GREEN + "16. Metadefender")
-  print(Fore.GREEN + "17. MalwareBazaar")
-  print(Fore.GREEN + "18. VirusTotal")
-  print()
-  print(Fore.RED + "=========== Email OSINT-tool ============")
-  print(Fore.GREEN + "19. Epieos")
-  print(Fore.GREEN + "20. Email parse")
-  print()
-  print(Fore.RED + "=========== Threat Intelligence OSINT-tool")
-  print(Fore.GREEN + "21. Securelist")
-  print(Fore.GREEN + "22. Mitre")
-  print(Fore.GREEN + "23. Misp")
-  print()
-  print(Fore.RED + "========== Mobile Network OSINT-tool")
-  print(Fore.GREEN + "24. CellID")
-  print(Fore.GREEN + "25. Usgs")
-  print()
-  print(Fore.YELLOW + "=========== Disclaimer =============")
-  print(Fore.GREEN + "Attention! GPTVULNSINT is strictly for legal testing only!")
-  print()
-
-  choice = input(Fore.GREEN + "Enter choice(1-25): ") 
-
-  if choice == "1":
-    tool.freecampdev()
-  elif choice == "2":
-    tool.scan()
-  elif choice == "3":
-    tool.publicwww()
-  elif choice == "4":
-    tool.censys()
-  elif choice == "5":
-    tool.intelx()
-  elif choice == "6":
-    tool.generate_pdf()
-  elif choice == "7":
-    tool.google_search()
-  elif choice == "8":
-    tool.crt()
-  elif choice == "9":
-    tool.suip()
-  elif choice == "10":
-    tool.whois()
-  elif choice == "11":
-    tool.headers()
-  elif choice == "12":
-    tool.vulners()
-  elif choice == "13":
-    tool.wp_scanner()
-  elif choice == "14":
-    tool.phind()
-  elif choice == "15":
-    tool.kaspersky()
-  elif choice == "16":
-    tool.metadefender()
-  elif choice == "17":
-    tool.malwarebazaar()
-  elif choice == "18":
-    tool.virustotal()
-  elif choice == "19":
-    tool.epieos()
-  elif choice == "20":
-    website_url = input(Fore.GREEN + "Enter url for email parsing: ").strip()
-    if not website_url.startswith('http'):
-      website_url = 'https://' + website_url
-
-    print(Fore.GREEN + f"\n[*] Parsing email addresses: {website_url}")
-    time.sleep(0.3)
-    found_emails = tool.email_parse(website_url) 
-
-    print("\n" + "="*30)
-    time.sleep(0.3)
-    print("Email addresses found:")
-
-    if found_emails:
-      for email in sorted(found_emails):
-        print(Fore.GREEN + f"- {email}")
-    else:
-      print(Fore.GREEN + "Email-addresses not found")
-      print(Fore.GREEN + "="*30) 
-  elif choice == "21":
-    tool.securelist()
-  elif choice == "22":
-    tool.mitre()
-  elif choice == "23":
-    tool.misp()
-  elif choice == "24":
-    tool.cell_id()
-  elif choice == "25":
-    tool.usgs()
-  else:
-    print(Fore.RED + "[-] Invalid choice")
+    main()
