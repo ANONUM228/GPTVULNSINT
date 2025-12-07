@@ -1,112 +1,58 @@
-Professional OSINT & Vulnerability Research Platform
-GPTVULNSINT is an advanced and high-performance framework for Open Source Intelligence (OSINT) and vulnerability research, developed by a 15-year-old security enthusiast. Focused on transforming raw data into actionable insights, GPTVULNSINT includes an extensive set of tools for reconnaissance, analysis, and reporting.
+# GPTVULNSINT: OSINT & Threat Intelligence Platform
 
-Version: v5.5
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
 
-Asynchronous Operations: Built with asyncio and aiohttp for incredibly fast and efficient network request processing.
+Automated OSINT collection, vulnerability correlation, and secrets detection in one framework. Built for security researchers and threat hunters who need to turn scattered data into clear insights.
 
-Broad OSINT Integration: Supports over 21 data sources for comprehensive intelligence gathering (see list below).
+> Core Idea: One tool to query 21+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
 
-SSRF Protection: Built-in IP address validation safeguards against Server-Side Request Forgery attacks during URL scanning.
+## Why GPTVULNSINT?
 
-Sensitive Data Scan (FAST): A rapid asynchronous scanner for identifying critical secrets (API keys, tokens, passwords) in HTML and JavaScript, utilizing strict patterns and filtering test data.
+*   Async Speed: Scans multiple targets and sources simultaneously using asyncio.
+*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK, Shodan, and 17+ other sources.
+*   Secrets Detection: Finds API keys, tokens, passwords in code with risk-level assessment.
+*   Professional Reporting: Console output with rich library + automatic PDF reports.
+*   Built Safely: SSRF protection, input validation, and ethical-use safeguards.
 
-Rich Visualization: Beautifully structured and color-coded reports of discovered secrets using the rich library, categorized by risk levels (CRITICAL, HIGH, MEDIUM).
+## Get Started in 60 Seconds
 
-Deep URL Analysis: Extracts links and analyzes HTTP headers for common security misconfigurations.
-
-Email OSINT: Parses email addresses from webpages and leverages specialized OSINT tools.
-
-PDF Reporting: Generates detailed PDF reports of all conducted scans.
-
-Logging: Detailed logging of all operations and findings for post-analysis.
-
-Interactive Menu: User-friendly console interface for navigating through functions.
-
-Automatic Saving: Quick saving of sensitive data scan results to text files.
-
-
-Integrated Sources (21+)
-
-Subdomains: freecamp.dev
-
-Website Source Code: PublicWWW
-
-IoT Search Engines: Censys
-
-Data Breach & Leak Aggregation: IntelligenceX
-
-Vulnerability Databases: Vulners
-
-WP Scanners: HackerTarget (WordPress Security Scanner)
-
-AI Search: Phind
-
-General Search: Google
-
-Certificates: crt.sh
-
-Host Mapping Tools: Suip.biz
-
-Domain Information: Whois
-
-Threat Intelligence Platforms: Kaspersky TI, MetaDefender, MalwareBazaar, VirusTotal, Securelist
-
-Email OSINT: Epieos, Email Parser
-
-TI Frameworks: MITRE ATT&CK, MISP
-
-Mobile & Geo Data: CellID (Cell Tower Info), USGS Earth Explorer
-
-Screenshot:
-
-<img width="627" height="863" alt="Снимок экрана 2025-12-07 191141" src="https://github.com/user-attachments/assets/00da76a8-cc04-4b34-8e17-a22beb03f417" />
-
-Installation:
-
-For Termux:
-pkg update && pkg upgrade -y
-pkg install git python -y
 git clone https://github.com/ANONUM228/GPTVULNSINT.git
 cd GPTVULNSINT
 pip install -r requirements.txt
 python3 gptvulnsint.py
+Then: Use the interactive menu. No config needed for basic scans.
 
+📸 See It in Action
 
-For Linux / macOS / Windows (with Python 3.9+):
+images/screenshot.png
 
-1. Clone the repository:
-  git clone https://github.com/ANONUM228/GPTVULNSINT.git
-  cd GPTVULNSINT
+What's Inside? (Key Modules)
 
-2. Create and activate a virtual environment (recommended):
-  python3 -m venv venv
-  source venv/bin/activate # For Linux/macOS
-  .\venv\Scripts\activate # For Windows
+Module Description
+Sensitive Data Scan Fast async scanner for secrets in HTML/JS.
+URL & Header Analysis Security checks and link extraction.
+Email OSINT Parse and investigate email addresses.
+Vulnerability Lookup Query Vulners, MITRE ATT&CK for CVE data.
+Threat Intel Feed Pull data from VirusTotal, MalwareBazaar, etc.
+Report Generator Create PDF summaries of findings.
 
-3. Install dependencies:
-  pip install -r requirements.txt
+Responsible Use
 
-4. Run the framework:
-  python3 gptvulnsint.py
+This tool is for authorized security testing and education only.
+You must have explicit permission to scan any target you do not own.
+The author is not responsible for misuse.
 
+Contribute
 
-Usage simply run the script and select an option from the interactive menu:
+Found a bug? Have an idea?
+Open an Issue or submit a Pull Request.
+See CONTRIBUTING.md for guidelines (you can create this file later).
 
-python3 gptvulnsint.py
+License
 
-Example:
+MIT. See the LICENSE file.
 
-... (GPTVULNSINT Menu) ...
-
-Select option (0-28): 15
-
-WARNING:
-
-GPTVULNSINT is designed exclusively for educational purposes, ethical security testing, and conducting authorized OSINT research.
-
-The author bears no responsibility for any unlawful actions undertaken using this framework.
-
-Active scanning modules (such as URL scanning, email analysis, header analysis, sensitive data scanning) MAY ONLY be used with explicit, written permission from the owner of the target system.
-
-Violation of this principle is illegal and unethical.
+Built by a security researcher focused on automation and actionable intelligence.
+Project maintained under a legacy GitHub handle. Professional alias: dev-researcher.
