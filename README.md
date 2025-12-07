@@ -44,12 +44,6 @@ This tool is for authorized security testing and education only.
 You must have explicit permission to scan any target you do not own.
 The author is not responsible for misuse.
 
-Contribute
-
-Found a bug? Have an idea?
-Open an Issue or submit a Pull Request.
-See CONTRIBUTING.md for guidelines (you can create this file later).
-
 License
 
 MIT. See the LICENSE file.
