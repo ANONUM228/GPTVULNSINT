@@ -60,7 +60,7 @@ Mobile & Geo Data: CellID (Cell Tower Info), USGS Earth Explorer
 
 Screenshot:
 
-<img width="885" height="927" alt="Снимок экрана 2025-11-26 173659" src="https://github.com/user-attachments/assets/84b98f7e-3d62-4196-ab5d-d98b3bb31dcd" />
+<img width="627" height="863" alt="Снимок экрана 2025-12-07 191141" src="https://github.com/user-attachments/assets/00da76a8-cc04-4b34-8e17-a22beb03f417" />
 
 Installation:
 
