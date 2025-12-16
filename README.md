@@ -6,12 +6,12 @@
 
 Automated OSINT collection, vulnerability correlation, and secrets detection in one framework. Built for security researchers and threat hunters who need to turn scattered data into clear insights.
 
-> Core Idea: One tool to query 21+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
+> Core Idea: One tool to query 26+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
 
 ## Why GPTVULNSINT?
 
 *   Async Speed: Scans multiple targets and sources simultaneously using asyncio.
-*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 17+ other sources.
+*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 23+ other sources.
 *   Secrets Detection: Finds API keys, tokens, passwords in code with risk-level assessment.
 *   Professional Reporting: Console output with rich library + automatic PDF reports.
 *   Built Safely: SSRF protection, input validation, and ethical-use safeguards.
