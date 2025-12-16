@@ -11,7 +11,7 @@ Automated OSINT collection, vulnerability correlation, and secrets detection in 
 ## Why GPTVULNSINT?
 
 *   Async Speed: Scans multiple targets and sources simultaneously using asyncio.
-*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK, Shodan, and 17+ other sources.
+*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 17+ other sources.
 *   Secrets Detection: Finds API keys, tokens, passwords in code with risk-level assessment.
 *   Professional Reporting: Console output with rich library + automatic PDF reports.
 *   Built Safely: SSRF protection, input validation, and ethical-use safeguards.
