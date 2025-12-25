@@ -5,13 +5,16 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 
 Automated OSINT collection, vulnerability correlation, and secrets detection in one framework. Built for security researchers and threat hunters who need to turn scattered data into clear insights.
+My nickname the HackBase: EthicallHacker228134
+Rating https://hackbase.standoff365.com/battle/7?section=ratings&tab=redSolo&offset=39 
 
-> Core Idea: One tool to query 26+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
+> Core Idea: One tool to query 22+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
 
 ## Why GPTVULNSINT?
-
+*   Async Framework.
 *   Async Speed: Scans multiple targets and sources simultaneously using asyncio.
-*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 23+ other sources.
+*   Async LFI Scanner.
+*   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 19+ other sources.
 *   Secrets Detection: Finds API keys, tokens, passwords in code with risk-level assessment.
 *   Professional Reporting: Console output with rich library + automatic PDF reports.
 *   Built Safely: SSRF protection, input validation, and ethical-use safeguards.
@@ -32,6 +35,7 @@ What's Inside? (Key Modules)
 
 Module Description
 Sensitive Data Scan Fast async scanner for secrets in HTML/JS.
+LFI Vulnerability Scanner
 URL & Header Analysis Security checks and link extraction.
 Email OSINT Parse and investigate email addresses.
 Vulnerability Lookup Query Vulners, MITRE ATT&CK for CVE data.
