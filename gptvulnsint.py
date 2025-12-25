@@ -1,7 +1,6 @@
 import re
 import asyncio
 import aiohttp
-import webbrowser
 import socket
 import time
 import logging
@@ -14,6 +13,7 @@ from colorama import init, Fore, Back, Style
 from bs4 import BeautifulSoup
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+import os, platform, webbrowser, shutil, subprocess
 
 init(autoreset=True)
 logging.basicConfig(
@@ -21,6 +21,44 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
+
+def safe_open_url(url, description="url"):
+    try:
+        current_os = platform.system()
+
+        
+        if current_os == "Windows":
+            webbrowser.open(url, new=2)
+            print(Fore.YELLOW + f"Opening {description} in browser...")
+            return True
+
+        if shutil.which("wslview"):         
+            subprocess.run(["wslview", url])
+            print(Fore.YELLOW + f"Opening {description} in Windows browser...")
+            return True
+
+        for br in ("w3m", "lynx", "links", "elinks"):
+            if shutil.which(br):
+                print(Fore.YELLOW + f"Opening {description} in {br} ...")
+                subprocess.run([br, url])
+                return True
+
+        if current_os == "Linux" and os.environ.get("DISPLAY") and shutil.which("xdg-open"):
+            subprocess.run(["xdg-open", url])
+            print(Fore.YELLOW + f"Opening {description} in system browser...")
+            return True
+        
+        if current_os == "Darwin":
+            subprocess.run(["open", url])
+            print(Fore.YELLOW + f"Opening {description} in default browser...")
+            return True
+
+    except Exception as e:
+        logging.error(f"Browser open failed: {e}")
+
+    print(Fore.GREEN + f"\n[+] {description} URL: {url}")
+    print(Fore.WHITE + "   (Ctrl+click or copy-paste into browser)")
+    return False
 
 def print_banner():
     print(Fore.YELLOW + "="*11)
@@ -30,18 +68,6 @@ def print_banner():
     print(Fore.CYAN + "GPTVULNSINT v7.0 - Professional OSINT Framework")
     print(Fore.RED + "Author: ANONUM228 | For educational purposes only!")
     print()
-
-def safe_open_url(url, description="url"):
-    try:
-        print(Fore.YELLOW + f"Opening {description}...")
-        webbrowser.open(url)
-        logging.info(f"Opened {description}: {url}")
-        time.sleep(0.3)
-        return True
-    except Exception as e:
-        logging.error(f"Error opening {description}: {e}")
-        print(Fore.RED + f"Error opening {description}: {e}")
-        return False
 
 def normalize_url(url):
     if not url:
