@@ -27,11 +27,11 @@ pip install -r requirements.txt
 python3 gptvulnsint.py
 Then: Use the interactive menu. No config needed for basic scans.
 
-Contributing
+# Contributing
 
 Issues and Pull Requests are welcome.
 
-What's Inside? (Key Modules)
+# What's Inside? (Key Modules)
 
 Module Description
 Sensitive Data Scan Fast async scanner for secrets in HTML/JS.
@@ -42,13 +42,21 @@ Vulnerability Lookup Query Vulners, MITRE ATT&CK for CVE data.
 Threat Intel Feed Pull data from VirusTotal, MalwareBazaar, etc.
 Report Generator Create PDF summaries of findings.
 
-Responsible Use
+# Features
+
+# 🇰🇪 Kenya Special Intelligence
+ **Phone Validator:** Deep analysis of Kenyan (+254) numbers.
+ **Operator Check:** Automatically detects if the number belongs to Safaricom (essential for M-Pesa security).
+ **Fraud Lookup:** Automated search across local forums and scam databases for fraud reports.
+
+
+# Responsible Use
 
 This tool is for authorized security testing and education only.
 You must have explicit permission to scan any target you do not own.
 The author is not responsible for misuse.
 
-License
+# License
 
 MIT. See the LICENSE file.
 
