@@ -14,6 +14,8 @@ from bs4 import BeautifulSoup
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import os, platform, webbrowser, shutil, subprocess
+from phonenumbers import geocoder, carrier
+import phonenumbers
 
 init(autoreset=True)
 logging.basicConfig(
@@ -147,7 +149,7 @@ class GPTVULNSINT:
     def __init__(self):
         self.scan_results = []
         self.session = None
-        self.visited_urls = set()  # Для отслеживания уникальных URL
+        self.visited_urls = set()
         print(Fore.GREEN + "[+] Framework initialized successfully!")
         
     async def __aenter__(self):
@@ -306,16 +308,18 @@ class GPTVULNSINT:
             
     async def whois(self):
         try:
-            domain = input(Fore.CYAN + "Enter domain: ").strip()
+            domain = input(Fore.CYAN + "Enter Domain/IP (example site.co.ke): ").strip()
             if not domain:
                 return
-                
-            url = f"https://www.reg.ru/whois/?dname={domain}"
-            self.scan_results.append(f"Whois Lookup: {domain}")
-            safe_open_url(url, "Whois")
+
+            url = f"https://www.whois.com/whois/{domain}"
+
+            print(Fore.YELLOW + f"[*] Deep network scanning for {domain}...")
+            self.scan_results.append(f"Network WHOIS: {domain} via CentralOps")
+            safe_open_url(url, "CentralOps Domain Dossier")
+
         except Exception as e:
-            print(Fore.RED + f"Error in whois: {e}")
-            logging.error(f"Whois error: {e}")
+            print(Fore.RED + f"Error module WHOIS: {e}")
 
     async def headers(self):
         try:
@@ -704,6 +708,37 @@ class GPTVULNSINT:
         except Exception as e:
             print(Fore.RED + f"Error in usgs: {e}")
             logging.error(f"USGS error: {e}")
+
+    async def phone_analyzer(self):
+        try:
+            number = input(Fore.CYAN + "Enter number (example +254...): ").strip()
+            if not number:
+                return
+
+            parsed_number = phonenumbers.parse(number)
+
+            if not phonenumbers.is_valid_number(parsed_number):
+                print(Fore.RED + "Number no vallid!")
+                return
+
+            region = geocoder.description_for_number(parsed_number, "ru")
+            operator = carrier.name_for_number(parsed_number, "en")
+
+            print(Fore.GREEN + f"\nCountry/Region: {region}")
+            print(Fore.GREEN + f"Operator: {operator}")
+
+            if number.startswith("+") and "Safaricom" not in operator:
+                number = ' ' + number 
+                print(Fore.RED + "ATTENTION: Number no belongs Safaricom (M-Pesa)!")
+
+            self.scan_results.append(f"Phone Analysis: {number} ({region}, {operator})")
+
+            search_url = f"https://www.google.com/search?q=\"{number}\" + (scam OR fraud OR wash-wash)"
+            safe_open_url(search_url, "M-Pesa Fraud Search")
+
+        except Exception as e:
+            print(Fore.RED + f"Error analyze number: {e}")
+
         
     async def google_search(self):
         try:
@@ -1036,47 +1071,48 @@ def print_menu():
             ("3", "PublicWWW Search"),
             ("4", "Censys Search"),
             ("5", "IntelX Search"),
-            ("8", "crt.sh Certificates"),
-            ("9", "Suip.biz Tools"),
-            ("10", "Whois Lookup")
+            ("6", "crt.sh Certificates"),
+            ("7", "Suip.biz Tools"),
+            ("8", "Whois Lookup")
         ]),
         
         ("VULNERABILITY SCANNING", [
-            ("11", "HTTP Headers Analysis"),
-            ("12", "Vulners Database"),
-            ("13", "WordPress Scanner"),
-            ("14", "Phind AI Search"),
-            ("15", "Sensitive Data Scan"),
-            ("29", "LFI Vulnerability Scanner")
+            ("9", "HTTP Headers Analysis"),
+            ("10", "Vulners Database"),
+            ("11", "WordPress Scanner"),
+            ("12", "Phind AI Search"),
+            ("13", "Sensitive Data Scan"),
+            ("14", "LFI Vulnerability Scanner")
         ]),
         
         ("MALWARE ANALYSIS", [
-            ("16", "Kaspersky TI"),
-            ("17", "MetaDefender"),
-            ("18", "MalwareBazaar"),
-            ("19", "VirusTotal")
+            ("15", "Kaspersky TI"),
+            ("16", "MetaDefender"),
+            ("17", "MalwareBazaar"),
+            ("18", "VirusTotal")
         ]),
         
         ("EMAIL OSINT", [
-            ("20", "Epieos"),
-            ("21", "Email Parser")
+            ("19", "Epieos"),
+            ("20", "Email Parser")
         ]),
         
         ("THREAT INTELLIGENCE", [
-            ("22", "SecureList (Kaspersky)"),
-            ("23", "MITRE ATT&CK"),
-            ("24", "MISP Platform")
+            ("21", "SecureList (Kaspersky)"),
+            ("22", "MITRE ATT&CK"),
+            ("23", "MISP Platform")
         ]),
         ("MOBILE & GEO", [
-            ("25", "Cell Tower Info"),
-            ("26", "USGS Earth Explorer")
+            ("24", "Cell Tower Info"),
+            ("25", "USGS Earth Explorer"),
+            ("26", "Information phone number")
         ]),
         
         ("UTILITIES", [
-            ("7", "Google Search"),
-            ("6", "Generate PDF Report"),
-            ("27", "Show Statistics"),
-            ("28", "Clear Results"),
+            ("27", "Google Search"),
+            ("28", "Generate PDF Report"),
+            ("29", "Show Statistics"),
+            ("30", "Clear Results"),
             ("0", "Exit")
         ])
     ]
@@ -1110,53 +1146,55 @@ async def main():
             elif choice == "5":
                 await tool.intelx()
             elif choice == "6":
-                await tool.generate_pdf()
-            elif choice == "7":
-                await tool.google_search()
-            elif choice == "8":
                 await tool.crt()
-            elif choice == "9":
+            elif choice == "7":
                 await tool.suip()
-            elif choice == "10":
+            elif choice == "8":
                 await tool.whois()
-            elif choice == "11":
+            elif choice == "9":
                 await tool.headers()
-            elif choice == "12":
+            elif choice == "10":
                 await tool.vulners()
-            elif choice == "13":
+            elif choice == "11":
                 await tool.wp_scanner()
-            elif choice == "14":
+            elif choice == "12":
                 await tool.phind()
-            elif choice == "15":
+            elif choice == "13":
                 await tool.sensitive_data_scan()
-            elif choice == "16":
+            elif choice == "14":
+                await tool.lfi_scanner()
+            elif choice == "15":
                 await tool.kaspersky()
-            elif choice == "17":
+            elif choice == "16":
                 await tool.metadefender()
-            elif choice == "18":
+            elif choice == "17":
                 await tool.malwarebazaar()
-            elif choice == "19":
+            elif choice == "18":
                 await tool.virustotal()
-            elif choice == "20":
+            elif choice == "19":
                 await tool.epieos()
-            elif choice == "21":
+            elif choice == "20":
                 await tool.email_parse()
-            elif choice == "22":
+            elif choice == "21":
                 await tool.securelist()
-            elif choice == "23":
+            elif choice == "22":
                 await tool.mitre()
-            elif choice == "24":
+            elif choice == "23":
                 await tool.misp()
+            elif choice == "24":
+                await tool.usgs()
             elif choice == "25":
                 await tool.cell_id()
             elif choice == "26":
-                await tool.usgs()
+                await tool.phone_analyzer()
             elif choice == "27":
-                await tool.show_stats()
+                await tool.google_search()
             elif choice == "28":
-                await tool.clear_results()
+                await tool.generate_pdf()
             elif choice == "29":
-                await tool.lfi_scanner()
+                await tool.show_stats()
+            elif choice == "30":
+                await tool.clear_results()
             else:
                 print(Fore.RED + "Invalid option")
                 
