@@ -14,6 +14,7 @@ Rating https://hackbase.standoff365.com/battle/7?section=ratings&tab=redSolo&off
 *   Async Framework.
 *   Async Speed: Scans multiple targets and sources simultaneously using asyncio.
 *   Async LFI Scanner.
+*   Async RCE Scanner.
 *   Unified OSINT: Single interface for Censys, VirusTotal, MITRE ATT&CK and 19+ other sources.
 *   Secrets Detection: Finds API keys, tokens, passwords in code with risk-level assessment.
 *   Professional Reporting: Console output with rich library + automatic PDF reports.
@@ -35,7 +36,8 @@ Issues and Pull Requests are welcome.
 
 Module Description
 Sensitive Data Scan Fast async scanner for secrets in HTML/JS.
-LFI Vulnerability Scanner
+LFI Vulnerability Scanner.
+RCE Vulnerability Scanner.
 URL & Header Analysis Security checks and link extraction.
 Email OSINT Parse and investigate email addresses.
 Vulnerability Lookup Query Vulners, MITRE ATT&CK for CVE data.
