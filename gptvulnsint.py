@@ -16,7 +16,6 @@ from reportlab.lib.pagesizes import A4
 import os, platform, webbrowser, shutil, subprocess
 from phonenumbers import geocoder, carrier
 import phonenumbers
-import requests
 
 init(autoreset=True)
 logging.basicConfig(
@@ -68,7 +67,7 @@ def print_banner():
     print(Fore.GREEN + r"GPTVULNSINT")
     print(Fore.YELLOW + "="*11)
     print()
-    print(Fore.CYAN + "GPTVULNSINT v7.0 - Professional OSINT Framework")
+    print(Fore.CYAN + "GPTVULNSINT v8.0 - Professional OSINT Framework")
     print(Fore.RED + "Author: ANONUM228 | For educational purposes only!")
     print()
 
@@ -719,23 +718,21 @@ class GPTVULNSINT:
             parsed_number = phonenumbers.parse(number)
 
             if not phonenumbers.is_valid_number(parsed_number):
-                print(Fore.RED + "Number no vallid!")
+                print(Fore.RED + "Number is invalid!")
                 return
 
             region = geocoder.description_for_number(parsed_number, "ru")
             operator = carrier.name_for_number(parsed_number, "en")
 
             print(Fore.GREEN + f"\nCountry/Region: {region}")
-            print(Fore.GREEN + f"Operator: {operator}")
+            print(Fore.GREEN + f"\nOperator: {operator if operator else 'Unknown'}")
 
-            if number.startswith("+") and "" not in operator:
-                number = ' ' + number 
-                print(Fore.RED + "ATTENTION: Number no belongs!")
+            if number.startswith("+") and not operator:
+              print(Fore.RED + "ATTENTION: Carrier information not found!")
 
             self.scan_results.append(f"Phone Analysis: {number} ({region}, {operator})")
 
-            search_url = f"https://www.google.com/search?q=\"{number}\" + (scam OR fraud OR wash-wash)"
-            safe_open_url(search_url, "Fraud Search")
+            search_url = f"https://www.google.com/search?q=\"{number}\" + (scam OR fraud)"
 
         except Exception as e:
             print(Fore.RED + f"Error analyze number: {e}")
