@@ -46,9 +46,9 @@ Report Generator Create PDF summaries of findings.
 
 # Features
 
-# 🇰🇪 Kenya Special Intelligence
- **Phone Validator:** Deep analysis of Kenyan (+254) numbers.
- **Operator Check:** Automatically detects if the number belongs to Safaricom (essential for M-Pesa security).
+# Special Intelligence
+ **Phone Validator:** Deep analysis (+1) numbers.
+ **Operator Check:** Automatically detects if the number belongs.
  **Fraud Lookup:** Automated search across local forums and scam databases for fraud reports.
 
 
