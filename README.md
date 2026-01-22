@@ -1,12 +1,13 @@
 # GPTVULNSINT: OSINT & Threat Intelligence Platform
 
-![Python](https://img.shields.io/badge/python-3.9%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![HackBase](https://img.shields.io/badge/HackBase-Top%20670-orange)
+
+**HackBase:** [EthicalHacker228134](https://hackbase.standoff365.com/profile/EthicalHacker228134) (Top-670)
 
 Automated OSINT collection, vulnerability correlation, and secrets detection in one framework. Built for security researchers and threat hunters who need to turn scattered data into clear insights.
-My nickname the HackBase: EthicallHacker228134
-Rating https://hackbase.standoff365.com/battle/7?section=ratings&tab=redSolo&offset=39 
 
 > Core Idea: One tool to query 22+ intelligence sources, scan for exposed secrets, and generate actionable reports — fast.
 
